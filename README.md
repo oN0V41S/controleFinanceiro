@@ -1,80 +1,36 @@
-# Projeto: Controle Financeiro (PI - Lógica e Gestão)
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**[Read in English](README-en.md)** | **Português**
+## Getting Started
 
-Este projeto é uma Aplicação WEB de controle financeiro desenvolvida como Projeto Integrador (PI). O foco é aplicar conceitos de Lógica de Programação e Gestão de Projetos em um cenário prático.
-
-A aplicação é um SPA (Single Page Application) que permite ao usuário gerenciar transações financeiras pessoais, com um foco especial em fechamentos quinzenais.
-
-## 💻 Tecnologias Utilizadas
-
-- **Framework:** Next.js (App Router)
-- **Linguagem:** TypeScript
-- **Back-end:** API Routes nativas do Next.js
-- **Banco de Dados:** Um arquivo `db.json` local para persistência de dados.
-
----
-
-## 🎯 Escopo da Primeira Entrega (Back-end)
-
-O objetivo desta etapa é construir a fundação lógica da aplicação: uma API RESTful para o **CRUD (Create, Read, Update, Delete)** de transações.
-
-### Modelo de Dados (`Transaction`)
-
-Este é o contrato de dados que a API utiliza, baseado no arquivo `src/types/finance.ts`:
-
-```typescript
-interface Transaction {
-  id: number;
-  dueDate: string; // Formato YYYY-MM-DD
-  value: number;
-  description: string;
-  responsible: string;
-  category: string;
-  type: "income" | "expense";
-}
-```
-
-### Endpoints da API (CRUD)
-
-Todos os endpoints estão localizados em `/api/transacoes`:
-
-| Método   | Endpoint               | Ação                                                                                                         |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `GET`    | `/api/transacoes`      | (Read) Retorna uma lista de todas as transações.                                                             |
-| `POST`   | `/api/transacoes`      | (Create) Cria uma nova transação. Espera um objeto `Transaction` (sem `id`) no corpo da requisição.          |
-| `PUT`    | `/api/transacoes/[id]` | (Update) Atualiza uma transação existente com base no `id`. Espera o objeto `Transaction` completo no corpo. |
-| `DELETE` | `/api/transacoes/[id]` | (Delete) Remove uma transação com base no `id`.                                                              |
-
-## 🚀 Como Executar o Projeto
-
-1. Clone o repositório:
+First, run the development server:
 
 ```bash
-git clone [https://github.com/oN0V41S/controleFinanceiro.git]
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-2. Navegue até a pasta:
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```bash
-cd controle-financeiro
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-3. Instale as dependências:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-```bash
-# Se estiver usando pnpm (com base no pnpm-lock.yaml)
-pnpm install
+## Learn More
 
-# Ou se estiver usando npm/yarn
-# npm install
-# yarn install
-```
+To learn more about Next.js, take a look at the following resources:
 
-4. Rode o servidor de desenvolvimento:
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-```bash
-pnpm run dev
-```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-A aplicação estará disponível em `http://localhost:3000`.
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
