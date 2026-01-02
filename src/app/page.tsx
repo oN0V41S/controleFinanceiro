@@ -1,65 +1,83 @@
-import Image from "next/image";
+// src/app/page.tsx
+'use client'; // Obrigatório, pois usa hooks
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+import React from 'react';
+import useFinanceData from '@/hooks/useFinanceData';
+
+// Importando os novos componentes de UI
+import FinanceHeader from '@/components/FinanceHeader';
+import FilterControls from '@/components/FilterControls';
+import DashboardView from '@/components/DashboardView';
+import TransactionsTable from '@/components/TransactionsTable';
+import TransactionModal from '@/components/TransactionModal';
+import ConfirmationModal from '@/components/ConfirmationModal';
+
+// O componente de página agora é um 'Contêiner'
+const FinancialManagerPage: React.FC = () => {
+    
+    // O hook 'useFinanceData' fornece todo o estado e lógica
+    const financeData = useFinanceData();
+
+    return (
+        <div className="min-h-screen bg-gray-100 font-sans">
+            
+            {/* 1. Componente de Cabeçalho */}
+            <FinanceHeader openModal={financeData.openModal} />
+
+            <main className="max-w-6xl mx-auto p-4">
+                <div className="bg-white rounded-xl shadow-lg mb-6">
+                    <div className="flex border-b border-gray-200">
+                        {/* Botões de Abas (Tabs) */}
+                        {['dashboard', 'transactions'].map(tab => (
+                            <button 
+                                key={tab} 
+                                onClick={() => financeData.setActiveTab(tab as any)}
+                                className={`px-6 py-4 font-semibold text-sm capitalize transition-colors duration-300 ${
+                                    financeData.activeTab === tab ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500 hover:text-gray-800'
+                                }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    {/* 2. Componente de Filtros */}
+                    <FilterControls {...financeData} />
+                </div>
+
+                {/* --- CONTENT AREA --- */}
+                {financeData.activeTab === 'dashboard' ? (
+                    // 3. Componente da Visão de Dashboard
+                    <DashboardView {...financeData} />
+                ) : (
+                    // 4. Componente da Tabela de Transações
+                    <TransactionsTable {...financeData} />
+                )}
+            </main>
+
+            {/* 5. Componente do Modal de Transação (Formulário) */}
+            <TransactionModal 
+                isOpen={financeData.showTransactionModal}
+                onClose={financeData.closeModal}
+                onSubmit={financeData.handleSubmit}
+                formData={financeData.formData}
+                onInputChange={financeData.handleInputChange}
+                editingTransaction={financeData.editingTransaction}
+                categories={financeData.categories}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+            {/* 6. Componente do Modal de Confirmação (Excluir) */}
+            <ConfirmationModal
+                isOpen={financeData.transactionToDelete !== null}
+                onClose={() => financeData.setTransactionToDelete(null)}
+                onConfirm={financeData.confirmDelete}
+                title="Confirmar Exclusão"
+                message="Você tem certeza que deseja excluir esta transação? Esta ação não pode ser desfeita."
+            />
+
+            {/* O CSS de animação deve ir para 'src/app/globals.css' */}
         </div>
-      </main>
-    </div>
-  );
-}
+    );
+};
+
+export default FinancialManagerPage;
