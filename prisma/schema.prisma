@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Transaction {
+  id                   String   @id @default(cuid())
+  type                 String   // 'income' | 'expense'
+  description          String   @db.VarChar(255)
+  value                Decimal  @db.Decimal(12, 2)
+  date                 DateTime @db.Date
+  category             String
+  responsible          String
+  installment_number   Int?
+  total_installments   Int?
+  is_recurring         Boolean  @default(false)
+  parent_transaction_id String?
+  paid                 Boolean  @default(false)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@index([date])
+  @@index([category])
+  @@index([type])
+  @@index([parent_transaction_id])
+  @@map("transactions")
+}
