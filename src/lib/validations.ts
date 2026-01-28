@@ -51,3 +51,6 @@ export type Transaction = z.infer<typeof TransactionSchema>;
 export type CreateTransactionInput = z.infer<typeof CreateTransactionSchema>;
 export type UpdateTransactionInput = z.infer<typeof UpdateTransactionSchema>;
 export type FinancialSummary = z.infer<typeof FinancialSummarySchema>;
+
+// Tipo para input do repository (exclui campos gerados pelo DB)
+export type TransactionInput = Omit<Transaction, 'id' | 'created_at' | 'updated_at'>;

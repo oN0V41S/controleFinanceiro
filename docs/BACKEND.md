@@ -238,4 +238,4 @@ Frontend (Re-render)
 
 ---
 
-**Mantainer**: Tim de Desenvolvimento | **Referências**: [TECHNICAL_DOCS.md](../TECHNICAL_DOCS.md)
+**Mantainer**: @oN0V41S | **Referências**: [TECHNICAL_DOCS.md](../TECHNICAL_DOCS.md)

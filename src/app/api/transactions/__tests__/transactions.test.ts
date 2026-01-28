@@ -1,5 +1,11 @@
-import { CreateTransactionSchema, UpdateTransactionSchema } from '@/lib/validations';
+import { CreateTransactionSchema, UpdateTransactionSchema, TransactionSchema } from '@/lib/validations';
 
+/**
+ * Transaction Validations Test Suite
+ * 
+ * Testes para validação de schemas Zod
+ * Executa automaticamente via GitHub Actions em cada commit
+ */
 describe('Transaction Validations (Zod)', () => {
   describe('CreateTransactionSchema', () => {
     it('should validate a valid transaction input', () => {
@@ -14,6 +20,27 @@ describe('Transaction Validations (Zod)', () => {
 
       const result = CreateTransactionSchema.safeParse(validInput);
       expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.type).toBe('expense');
+        expect(result.data.value).toBe(150.50);
+      }
+    });
+
+    it('should validate income transaction', () => {
+      const incomeInput = {
+        type: 'income',
+        description: 'Salário',
+        value: 5000,
+        date: '2026-01-21',
+        category: 'Salário',
+        responsible: 'Empresa XYZ',
+      };
+
+      const result = CreateTransactionSchema.safeParse(incomeInput);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.type).toBe('income');
+      }
     });
 
     it('should reject invalid type', () => {
@@ -35,6 +62,20 @@ describe('Transaction Validations (Zod)', () => {
         type: 'expense',
         description: 'Test',
         value: -100, // negativo
+        date: '2026-01-21',
+        category: 'Alimentação',
+        responsible: 'João',
+      };
+
+      const result = CreateTransactionSchema.safeParse(invalidInput);
+      expect(result.success).toBe(false);
+    });
+
+    it('should reject zero value', () => {
+      const invalidInput = {
+        type: 'expense',
+        description: 'Test',
+        value: 0, // zero não é válido (positive())
         date: '2026-01-21',
         category: 'Alimentação',
         responsible: 'João',

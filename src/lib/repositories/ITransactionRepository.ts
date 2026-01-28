@@ -1,11 +1,11 @@
-import { Transaction, FinancialSummary } from '@/types/finance';
+import { Transaction, FinancialSummary, TransactionInput } from '@/types/finance';
 
 export interface ITransactionRepository {
-  // CRUD basics
+  // CRUD básico
   getAll(filters?: Record<string, any>): Promise<Transaction[]>;
   getById(id: string): Promise<Transaction | null>;
-  create(data: Omit<Transaction, 'id'>): Promise<Transaction>;
-  update(id: string, data: Partial<Transaction>): Promise<Transaction | null>;
+  create(data: TransactionInput): Promise<Transaction>;
+  update(id: string, data: Partial<TransactionInput>): Promise<Transaction | null>;
   delete(id: string): Promise<boolean>;
 
   // Analytics

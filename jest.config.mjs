@@ -18,6 +18,28 @@ const config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+
+  // Coverage configuration
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.stories.tsx",
+    "!src/**/index.ts",
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 50,
+      functions: 50,
+      lines: 50,
+      statements: 50,
+    },
+  },
+  testMatch: [
+    "**/__tests__/**/*.ts?(x)",
+    "**/?(*.)+(spec|test).ts?(x)",
+  ],
+  testPathIgnorePatterns: ["/node_modules/", "/.next/"],
+  transformIgnorePatterns: ["/node_modules/"],
 };
 
 export default createJestConfig(config);
