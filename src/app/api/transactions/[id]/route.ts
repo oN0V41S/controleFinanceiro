@@ -5,10 +5,10 @@ import { transactionRepository } from '@/lib/repositories/container';
 // PUT /api/transactions/[id] - Atualizar transação existente
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const validatedData = UpdateTransactionSchema.parse(body);
 
@@ -40,10 +40,10 @@ export async function PUT(
 // DELETE /api/transactions/[id] - Deletar transação
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const success = await transactionRepository.delete(id);
 
     if (!success) {
