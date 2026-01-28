@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { ITransactionRepository } from './ITransactionRepository';
-import { Transaction, FinancialSummary } from '@/types/finance';
+import { Transaction, FinancialSummary, TransactionInput } from '@/types/finance';
 
 const prisma = new PrismaClient();
 
@@ -42,7 +42,7 @@ export class PostgresTransactionRepository implements ITransactionRepository {
     };
   }
 
-  async create(data: Omit<Transaction, 'id'>): Promise<Transaction> {
+  async create(data: TransactionInput): Promise<Transaction> {
     const transaction = await prisma.transaction.create({
       data: {
         ...data,
@@ -58,7 +58,7 @@ export class PostgresTransactionRepository implements ITransactionRepository {
     };
   }
 
-  async update(id: string, data: Partial<Transaction>): Promise<Transaction | null> {
+  async update(id: string, data: Partial<TransactionInput>): Promise<Transaction | null> {
     try {
       const updateData: any = { ...data };
       if (data.date) updateData.date = new Date(data.date);
