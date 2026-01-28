@@ -15,9 +15,10 @@
 7. [Endpoints da API CRUD](#endpoints-da-api-crud)
 8. [Integração com IA](#integração-com-ia)
 9. [Performance e FinOps](#performance-e-finops)
-10. [Plano de Implementação](#plano-de-implementação)
-11. [Segurança](#segurança)
-12. [Deploy e Hospedagem](#deploy-e-hospedagem)
+10. [CI/CD com GitHub Actions](#cicd-com-github-actions)
+11. [Plano de Implementação](#plano-de-implementação)
+12. [Segurança](#segurança)
+13. [Deploy e Hospedagem](#deploy-e-hospedagem)
 
 ---
 
@@ -385,6 +386,110 @@ Agente de IA executará análises internas e comandos simples de CRUD.
 
 ---
 
+## CI/CD com GitHub Actions
+
+### Workflow Automático
+
+Pipeline de CI/CD configurado via [.github/workflows/test.yml](.github/workflows/test.yml) executando **automaticamente a cada commit** e **pull request**.
+
+### Componentes do Pipeline
+
+#### 1. **Job: Test Suite** (Principal)
+- **Trigger**: Push em `main`, `develop`, `feat/**`; PRs
+- **Matrix**: Node 18.x, 20.x (testa múltiplas versões)
+- **Steps**:
+  - ✅ Checkout código
+  - ✅ Setup pnpm + Node
+  - ✅ Install dependencies (com cache)
+  - ✅ ESLint check (linting)
+  - ✅ Jest tests com `--coverage`
+  - ✅ Upload coverage para Codecov
+
+**Duração**: ~3-5 minutos por Node version
+
+#### 2. **Job: Build Check** (Bloqueador)
+- Valida `pnpm build` em ambiente de produção
+- Previne PRs com erros de TypeScript/Next.js
+- Depende de Test Suite (só executa se testes passam)
+
+#### 3. **Job: Security Scan** (Não-bloqueador)
+- `pnpm audit` para verificar vulnerabilidades de dependências
+- Relatório é comentado no PR (informativo)
+
+### Proteção de Branches
+
+Com configuração via GitHub Settings:
+
+```
+main branch:
+├─ ✅ Testes devem passar (Test Suite 18.x + 20.x)
+├─ ✅ Build deve passar
+├─ ✅ 1 aprovação obrigatória
+└─ ✅ Branch deve estar atualizado com main
+```
+
+### Codecov Integration
+
+Relatório automático de **cobertura de testes** em cada PR:
+- **Coverage threshold**: 50% (linha, função, branch)
+- **Comentários automáticos** no PR com diferença de cobertura
+- **Dashboard**: https://codecov.io/
+
+### Fluxo de Desenvolvimento
+
+```
+1. git checkout -b feat/minha-feature
+2. Fazer alterações + testes
+3. git push origin feat/minha-feature
+4. Criar PR via GitHub
+   ↓
+5. GitHub Actions executa:
+   - Jest (Node 18.x) → 2-3 min
+   - Jest (Node 20.x) → 2-3 min
+   - Build Check → 1-2 min
+   - Security Scan → 1 min
+   ↓
+6. Status checks aparecem no PR
+   ✅ Test Suite (18.x)
+   ✅ Test Suite (20.x)
+   ✅ Build Check
+   ✅ Security Scan
+   ✓ Codecov (informativo)
+   ↓
+7. Se tudo verde: ✅ PR pode ser mergeado
+   Se algum falhou: ❌ Deve corrigir e fazer push novamente
+```
+
+### Boas Práticas Implementadas
+
+✅ **Caching**: pnpm-lock.yaml cachado (~30% mais rápido)
+✅ **Concurrency**: Cancela workflows antigos se novo push chega
+✅ **Matrix Testing**: Múltiplas versões do Node para compatibilidade
+✅ **Fail-fast**: Build Check depende de testes (economiza tempo)
+✅ **Não-bloqueadores**: Security/Linting não impedem merge (feedback apenas)
+✅ **Coverage Tracking**: Histórico de cobertura em Codecov
+✅ **PR Comments**: Feedback automático nos PRs
+
+### Setup Necessário (Uma única vez)
+
+1. **GitHub Settings → Branches → Branch Protection Rule**:
+   - Pattern: `main`
+   - Require status checks: `Test Suite (18.x)`, `Test Suite (20.x)`, `Build Check`
+   - Require PR before merge: Sim
+   - Require approvals: 1
+
+2. **Codecov.io (Opcional)**:
+   ```
+   https://codecov.io/ → Connect GitHub → Select repo
+   Token automático (já no workflow)
+   ```
+
+3. **Tudo pronto**: Próximo push acionará workflow automaticamente
+
+Consulte [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) para **instruções completas de configuração**.
+
+---
+
 ## Plano de Implementação
 
 ### Fases Concluídas
@@ -392,14 +497,15 @@ Agente de IA executará análises internas e comandos simples de CRUD.
 - [x] **Fase 1** (2-3h): Schemas Zod + validação
 - [x] **Fase 2** (3-4h): Repository Pattern + PostgreSQL Neon
 - [x] **Fase 3** (2-3h): Handlers CRUD (GET, POST, PUT, DELETE)
+- [x] **Fase 4** (1-2h): CI/CD com GitHub Actions + Jest automation
 
 ### Próximas Fases
 
-- [ ] **Fase 4** (2h): Testes unitários e integração
-- [ ] **Fase 5** (3-4h): Integração Frontend ↔ API
-- [ ] **Fase 6** (4-6h): Integração IA (Gemini)
-- [ ] **Fase 7** (3-4h): Autenticação (NextAuth.js)
-- [ ] **Fase 8** (1-2h): Deploy (Vercel)
+- [ ] **Fase 5** (2h): Testes de integração (Postman/API testing)
+- [ ] **Fase 6** (3-4h): Integração Frontend ↔ API
+- [ ] **Fase 7** (4-6h): Integração IA (Gemini)
+- [ ] **Fase 8** (3-4h): Autenticação (NextAuth.js)
+- [ ] **Fase 9** (1-2h): Deploy (Vercel)
 
 ---
 
@@ -409,6 +515,7 @@ Agente de IA executará análises internas e comandos simples de CRUD.
 
 - [x] **Validação de Entrada**: Zod em todos os endpoints
 - [x] **Sanitização**: Prisma usa parâmetros preparados
+- [x] **CI/CD Security**: GitHub Actions + security audit
 - [ ] **Autenticação**: JWT / NextAuth.js (futuro)
 - [ ] **Autorização**: Row-level security (futuro)
 - [ ] **Rate Limiting**: Middleware (futuro)
@@ -419,8 +526,9 @@ Agente de IA executará análises internas e comandos simples de CRUD.
 ### Recomendações Imediatas
 
 1. **Rotacionar Gemini API Key**: Chave já exposta em commit anterior
-2. **Habilitar CORS**: Restringir a origem `https://localhost:3000` em dev
-3. **Implementar Rate Limiting**: ~100 req/min por IP
+2. **Habilitar Branch Protection**: Main branch protegido por status checks
+3. **Habilitar CORS**: Restringir a origem `https://localhost:3000` em dev
+4. **Implementar Rate Limiting**: ~100 req/min por IP (middleware futuro)
 
 ---
 
