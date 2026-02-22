@@ -1,11 +1,5 @@
 import { CreateTransactionSchema, UpdateTransactionSchema, TransactionSchema } from '@/lib/validations';
 
-/**
- * Transaction Validations Test Suite
- * 
- * Testes para validação de schemas Zod
- * Executa automaticamente via GitHub Actions em cada commit
- */
 describe('Transaction Validations (Zod)', () => {
   describe('CreateTransactionSchema', () => {
     it('should validate a valid transaction input', () => {

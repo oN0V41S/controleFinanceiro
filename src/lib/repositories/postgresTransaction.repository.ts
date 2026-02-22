@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { ITransactionRepository } from './ITransactionRepository';
+import { ITransactionRepository } from './ITransaction.repository';
 import { Transaction, FinancialSummary, TransactionInput } from '@/types/finance';
 
 const prisma = new PrismaClient();
