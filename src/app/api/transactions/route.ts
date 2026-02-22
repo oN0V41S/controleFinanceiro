@@ -72,8 +72,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: created }, { status: 201 });
   } catch (error: any) {
     if (error.name === 'ZodError') {
+      console.log(
+        {
+          error: 'Validação falhou',
+          details: error
+        },
+        { status: 400 }
+      );
       return NextResponse.json(
-        { error: 'Validação falhou', issues: error.errors },
+        {
+          error: 'Validação falhou',
+          details: error.errors
+        },
         { status: 400 }
       );
     }
