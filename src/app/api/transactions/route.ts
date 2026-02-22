@@ -1,13 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CreateTransactionSchema } from '@/lib/validations';
-import { transactionRepository } from '@/lib/repositories/container';
-import { v4 as uuidv4 } from 'uuid';
+import { PostgresTransactionRepository } from '@lib/repositories/postgresTransaction.repository';
+import { TransactionService } from '@/lib/services/transactions.service';
 
-// GET /api/transactions - Listar transações com filtros opcionais
+// Instanciação com Injeção de Dependência
+const repository = new PostgresTransactionRepository();
+const service = new TransactionService(repository);
+
+// GET /api/transactions - Listar transações do usuário logado
 export async function GET(request: NextRequest) {
   try {
+    // Captura o userId injetado pelo Middleware
+    const userId = request.headers.get('x-user-id');
+    
+    if (!userId) {
+      return NextResponse.json({ error: 'Usuário não identificado' }, { status: 401 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const filters = {
+      userId, // Filtro obrigatório para segurança
       type: searchParams.get('type') || undefined,
       category: searchParams.get('category') || undefined,
       responsible: searchParams.get('responsible') || undefined,
@@ -15,82 +26,38 @@ export async function GET(request: NextRequest) {
       endDate: searchParams.get('endDate') || undefined,
     };
 
-    const transactions = await transactionRepository.getAll(filters);
-    const summary = await transactionRepository.getSummary(filters);
+    const transactions = await service.getAllTransactions(filters);
+    const summary = await service.getFinancialSummary(filters);
 
     return NextResponse.json({
       data: transactions,
       summary,
       total: transactions.length,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao buscar transações:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
   }
 }
 
-// POST /api/transactions - Criar nova transação
+// POST /api/transactions - Criar transação (Simples ou Parcelada)
 export async function POST(request: NextRequest) {
   try {
+    const userId = request.headers.get('x-user-id');
+    if (!userId) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+
     const body = await request.json();
-    const validatedData = CreateTransactionSchema.parse(body);
+    
+    // O service agora cuida da lógica de parcelamento e vinculação ao userId
+    const result = await service.createTransaction({ ...body, userId });
 
-    // Lógica básica de parcelas (simplificada)
-    if (validatedData.total_installments && validatedData.total_installments > 1) {
-      const valuePerInstallment = validatedData.value / validatedData.total_installments;
-
-      // Criar transação pai
-      const parentTransaction = await transactionRepository.create({
-        ...validatedData,
-        value: validatedData.value, // valor total no pai
-      });
-
-      // Criar parcelas filhas
-      const childTransactions = [];
-      for (let i = 1; i <= validatedData.total_installments; i++) {
-        const child = await transactionRepository.create({
-          ...validatedData,
-          value: valuePerInstallment,
-          installment_number: i,
-          total_installments: validatedData.total_installments,
-          parent_transaction_id: parentTransaction.id,
-        });
-        childTransactions.push(child);
-      }
-
-      return NextResponse.json(
-        { data: parentTransaction, childTransactions },
-        { status: 201 }
-      );
-    }
-
-    // Transação simples
-    const created = await transactionRepository.create(validatedData);
-    return NextResponse.json({ data: created }, { status: 201 });
+    return NextResponse.json({ data: result }, { status: 201 });
   } catch (error: any) {
     if (error.name === 'ZodError') {
-      console.log(
-        {
-          error: 'Validação falhou',
-          details: error
-        },
-        { status: 400 }
-      );
-      return NextResponse.json(
-        {
-          error: 'Validação falhou',
-          details: error.errors
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Validação falhou', details: error.errors }, { status: 400 });
     }
+    
     console.error('Erro ao criar transação:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || 'Erro interno do servidor' }, { status: 500 });
   }
 }
