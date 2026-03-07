@@ -97,6 +97,7 @@ cp .env.example .env.local
 # Edite com suas credenciais:
 # DATABASE_URL=postgresql://...
 # GEMINI_API_KEY=...
+#JWT_SECRET=sua_chave_secreta_para_JWT_aqui_com_pelo_menos_32_caracteres
 ```
 
 4. **Sincronize o banco de dados**:

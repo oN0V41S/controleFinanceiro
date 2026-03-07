@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PostgresTransactionRepository } from '@lib/repositories/postgresTransaction.repository';
-import { TransactionService } from '@/lib/services/transactions.service';
+import { transactionService } from '@/lib/repositories/container'; // Importa a instância já configurada
 
 // Instanciação com Injeção de Dependência
-const repository = new PostgresTransactionRepository();
-const service = new TransactionService(repository);
+// A instância 'transactionService' já está configurada no container.ts
 
 // GET /api/transactions - Listar transações do usuário logado
 export async function GET(request: NextRequest) {
@@ -26,8 +24,8 @@ export async function GET(request: NextRequest) {
       endDate: searchParams.get('endDate') || undefined,
     };
 
-    const transactions = await service.getAllTransactions(filters);
-    const summary = await service.getFinancialSummary(filters);
+    const transactions = await transactionService.getAllTransactions(filters);
+    const summary = await transactionService.getFinancialSummary(filters);
 
     return NextResponse.json({
       data: transactions,
@@ -44,12 +42,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const userId = request.headers.get('x-user-id');
-    if (!userId) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    // Validação robusta para garantir que userId é uma string não vazia e não "undefined" ou "null"
+    if (typeof userId !== 'string' || userId.trim() === '' || userId === 'undefined' || userId === 'null') {
+      console.error('Erro: userId inválido ou ausente no cabeçalho x-user-id. Recebido:', userId);
+      return NextResponse.json({ error: 'Usuário não autorizado ou ID inválido' }, { status: 401 });
+    }
 
     const body = await request.json();
     
     // O service agora cuida da lógica de parcelamento e vinculação ao userId
-    const result = await service.createTransaction({ ...body, userId });
+    const result = await transactionService.createTransaction({ ...body, userId });
 
     return NextResponse.json({ data: result }, { status: 201 });
   } catch (error: any) {

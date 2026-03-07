@@ -10,6 +10,7 @@ export interface UserRecord {
 }
 
 export interface IUserRepository {
+  findById(id: string): Promise<UserRecord | null>;
   findByEmail(email: string): Promise<UserRecord | null>;
   create(data: RegisterInput, hashedPassword?: string): Promise<Omit<UserRecord, 'password'>>;
 }

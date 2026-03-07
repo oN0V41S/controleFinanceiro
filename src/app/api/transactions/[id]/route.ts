@@ -24,8 +24,9 @@ export async function PUT(
     return NextResponse.json({ data: updated });
   } catch (error: any) {
     if (error.name === 'ZodError') {
+      console.log(error)
       return NextResponse.json(
-        { error: 'Validação falhou', issues: error.errors },
+        { error: 'Validação falhou', issues: error },
         { status: 400 }
       );
     }

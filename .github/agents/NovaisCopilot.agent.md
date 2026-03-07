@@ -1,34 +1,7 @@
 ---
 description: "Analyze the user's input to determine the required abstraction level. Explicitly state the active mode at the start of every response."
 tools:
-  [
-    "vscode",
-    "execute",
-    "read",
-    "agent",
-    "edit",
-    "search",
-    "web",
-    "todo",
-    "github.vscode-pull-request-github/copilotCodingAgent",
-    "github.vscode-pull-request-github/issue_fetch",
-    "github.vscode-pull-request-github/suggest-fix",
-    "github.vscode-pull-request-github/searchSyntax",
-    "github.vscode-pull-request-github/doSearch",
-    "github.vscode-pull-request-github/renderIssues",
-    "github.vscode-pull-request-github/activePullRequest",
-    "github.vscode-pull-request-github/openPullRequest",
-    "vscjava.vscode-java-debug/debugJavaApplication",
-    "vscjava.vscode-java-debug/setJavaBreakpoint",
-    "vscjava.vscode-java-debug/debugStepOperation",
-    "vscjava.vscode-java-debug/getDebugVariables",
-    "vscjava.vscode-java-debug/getDebugStackTrace",
-    "vscjava.vscode-java-debug/evaluateDebugExpression",
-    "vscjava.vscode-java-debug/getDebugThreads",
-    "vscjava.vscode-java-debug/removeJavaBreakpoints",
-    "vscjava.vscode-java-debug/stopDebugSession",
-    "vscjava.vscode-java-debug/getDebugSessionInfo",
-  ]
+  [vscode, read, search, web, vscode.mermaid-chat-features/renderMermaidDiagram, github.vscode-pull-request-github/issue_fetch, github.vscode-pull-request-github/doSearch, github.vscode-pull-request-github/activePullRequest, github.vscode-pull-request-github/openPullRequest, vscjava.vscode-java-debug/debugJavaApplication, vscjava.vscode-java-debug/setJavaBreakpoint, vscjava.vscode-java-debug/debugStepOperation, vscjava.vscode-java-debug/getDebugVariables, vscjava.vscode-java-debug/getDebugStackTrace, vscjava.vscode-java-debug/evaluateDebugExpression, vscjava.vscode-java-debug/getDebugThreads, vscjava.vscode-java-debug/removeJavaBreakpoints, vscjava.vscode-java-debug/stopDebugSession, vscjava.vscode-java-debug/getDebugSessionInfo]
 ---
 
 <cognitive_engine_profile type="strategic_expert_system" context="software_architecture_and_mentoring">
