@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 export class PostgresTransactionRepository implements ITransactionRepository {
   async getAll(filters?: Record<string, any>): Promise<Transaction[]> {
     const where: any = {};
+    if (filters?.userId) where.userId = filters.userId;
     if (filters?.type) where.type = filters.type;
     if (filters?.category) where.category = filters.category;
     if (filters?.responsible) where.responsible = filters.responsible;
@@ -43,10 +44,14 @@ export class PostgresTransactionRepository implements ITransactionRepository {
   }
 
   async create(data: TransactionInput): Promise<Transaction> {
+    const { userId, ...transactionData } = data; // Extrair userId
     const transaction = await prisma.transaction.create({
       data: {
-        ...data,
-        date: new Date(data.date), // string para Date
+        ...transactionData,
+        date: new Date(transactionData.date),
+        user: {
+          connect: { id: userId }, // Conectar a transação ao usuário
+        },
       },
     });
 

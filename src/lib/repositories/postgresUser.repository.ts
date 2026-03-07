@@ -21,6 +21,22 @@ export class PostgresUserRepository implements IUserRepository {
     };
   }
 
+  async findById(id: string): Promise<UserRecord | null> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) return null;
+
+    return {
+      id: user.id,
+      name: user.name,
+      nickname: user.nickname,
+      email: user.email,
+      password: user.password,
+    };
+  }
+
   async create(data: RegisterInput, hashedPassword?: string): Promise<Omit<UserRecord, 'password'>> {
     const user = await prisma.user.create({
       data: {
