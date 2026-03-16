@@ -1,6 +1,6 @@
 # Documentação Técnica – Controle Financeiro
 
-**Versão**: 1.0 | **Data**: Janeiro 2026 | **Status**: Fase 3 (CRUD Endpoints Completos)
+**Versão**: 1.0 | **Data**: Março 2026 | **Status**: Backend Concluído (Auth + Transactions)
 
 ---
 
@@ -12,13 +12,11 @@
 4. [Estratégia de Banco de Dados](#estratégia-de-banco-de-dados)
 5. [Camada de Validação (Zod)](#camada-de-validação-zod)
 6. [Abstração de Persistência (Repository Pattern)](#abstração-de-persistência-repository-pattern)
-7. [Endpoints da API CRUD](#endpoints-da-api-crud)
-8. [Integração com IA](#integração-com-ia)
+7. [API (Auth & Transactions)](#api-auth--transactions)
+8. [Segurança e Middleware](#segurança-e-middleware)
 9. [Performance e FinOps](#performance-e-finops)
 10. [CI/CD com GitHub Actions](#cicd-com-github-actions)
 11. [Plano de Implementação](#plano-de-implementação)
-12. [Segurança](#segurança)
-13. [Deploy e Hospedagem](#deploy-e-hospedagem)
 
 ---
 
@@ -26,92 +24,75 @@
 
 **Controle Financeiro** é uma aplicação Next.js full-stack para gestão de transações financeiras pessoais com suporte a:
 
+- **Autenticação Segura**: Registro e login com tokens JWT (Cookies).
 - **CRUD Completo**: Criar, ler, atualizar e deletar transações.
-- **Análises Inteligentes**: Agente de IA para gerar insights sobre gastos.
 - **Relatórios**: Sumário financeiro (income, expense, balance).
-- **Persistência Robusta**: PostgreSQL em produção, abstraída via Repository Pattern.
+- **Persistência Robusta**: PostgreSQL, abstraída via Repository Pattern.
 
 **Stack Tecnológico**:
 
 | Camada | Tecnologia |
 |--------|-----------|
 | **Frontend** | React 19, Next.js 16, TypeScript, Tailwind CSS |
-| **API Backend** | Next.js API Routes |
+| **API Backend** | Next.js API Routes (Proxy + Features) |
 | **Banco de Dados** | PostgreSQL (Neon) |
 | **Validação** | Zod |
 | **ORM** | Prisma 5.22 |
-| **IA** | Google Gemini Pro (integração em progresso) |
 | **Testes** | Jest + React Testing Library |
 
 ---
 
 ## Arquitetura do Sistema
 
-A aplicação segue **Clean Architecture** com separação de responsabilidades:
+A aplicação segue **Clean Architecture** com separação clara entre a interface (Next.js) e a lógica de negócio (Features):
 
 ```
 src/
 ├── app/
-│   ├── api/
-│   │   └── transactions/
-│   │       ├── route.ts                 # Handlers GET/POST
-│   │       └── [id]/
-│   │           └── route.ts             # Handlers PUT/DELETE
-│   ├── layout.tsx
-│   ├── page.tsx
-│   └── globals.css
-├── components/
-│   ├── DashboardView.tsx                # Componente principal
-│   ├── TransactionsTable.tsx            # Tabela de transações
-│   ├── TransactionModal.tsx             # Modal CRUD
-│   ├── FilterControls.tsx               # Filtros
-│   ├── FinanceHeader.tsx                # Header com sumário
-│   └── ui/                              # Componentes reutilizáveis
-├── hooks/
-│   └── useFinanceData.ts                # Hook para fetch de dados
+│   └── api/                # Handlers proxy (chamam as features)
+│       ├── auth/
+│       └── transactions/
+├── core/
+│   └── container.ts        # Injeção de dependência (DI)
+├── features/               # Domínio (Clean Architecture)
+│   ├── auth/
+│   └── transactions/
 ├── lib/
-│   ├── validations.ts                   # Schemas Zod
-│   ├── repositories/                    # Abstração de dados
-│   │   ├── ITransactionRepository.ts    # Interface
-│   │   ├── PostgresTransactionRepository.ts
-│   │   ├── InMemoryTransactionRepository.ts
-│   │   └── container.ts                 # Injeção de dependência
-│   ├── ai/
-│   │   ├── AIAnalyzer.ts                # Integração IA
-│   │   └── prompts.ts                   # Templates de prompts
-│   └── utils.ts
-├── types/
-│   └── finance.ts                       # Tipos e interfaces
-└── __tests__/
-    ├── api/
-    │   └── transactions.test.ts
-    └── lib/
-        └── validations.test.ts
+│   ├── prisma.ts           # Singleton PrismaClient
+│   └── auth-middleware.ts  # Segurança JWT
+├── shared/                 # Tipos e utilitários globais
+└── middleware.ts           # Proteção de rotas e injeção de x-user-id
 ```
 
 ### Fluxo de Dados
 
 ```
-Frontend Component
+Frontend
     ↓
-useFinanceData Hook (fetch)
+app/api/* (Proxy/Route Handler)
     ↓
-Next.js API Route (/api/transactions)
+features/*/ (Service Layer)
     ↓
-Validação (Zod)
+Repository Layer
     ↓
-Repository Pattern (Abstração)
-    ↓
-PostgreSQL / Prisma
-    ↓
-Resposta JSON normalizada
-    ↓
-Frontend (Re-render via React)
+Prisma + PostgreSQL
 ```
 
 ---
 
 ## Modelo de Dados
+
+### Interface `User`
+
+```typescript
+export interface User {
+  id: string;
+  name?: string | null;
+  nickname?: string | null;
+  email: string | null;
+  emailVerified?: Date | null;
+}
+```
 
 ### Interface `Transaction`
 
@@ -124,6 +105,7 @@ export interface Transaction {
   date: string;                        // ISO 8601 (YYYY-MM-DD)
   category: TransactionCategory;       // Categoria fixa
   responsible: string;                 // Responsável pela transação
+  userId: string;                      // Chave estrangeira para o usuário
   installment_number?: number;         // Número da parcela (1-based)
   total_installments?: number;         // Total de parcelas
   is_recurring?: boolean;              // Flag de recorrência
@@ -195,6 +177,8 @@ model Transaction {
   is_recurring         Boolean  @default(false)
   parent_transaction_id String?
   paid                 Boolean  @default(false)
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   created_at           DateTime @default(now())
   updated_at           DateTime @updatedAt
 
@@ -203,15 +187,32 @@ model Transaction {
   @@index([category])
   @@index([type])
   @@index([parent_transaction_id])
+  @@index([userId])
   @@map("transactions")
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  nickname      String?
+  email         String?       @unique
+  emailVerified DateTime?
+  password      String?       // Preenchido se usar Credentials (email/senha)
+  
+  // Relacionamentos
+  accounts      Account[]
+  sessions      Session[]
+  transactions  Transaction[] // Relacionamento com transações
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 ```
 
 **Índices Estratégicos** (Big-O: O(log n)):
 
-- `date`: Queries por período (ex.: "últimos 30 dias").
-- `category`: Filtros por categoria (ex.: "Total gasto em Transporte").
-- `type`: Segmentação income vs. expense.
+- `date`, `category`, `type`: Para filtros e agregações de transações.
+- `userId`: Essencial para isolar os dados de cada usuário (multi-tenancy).
 - `parent_transaction_id`: Busca de parcelas filhas.
 
 ---
@@ -264,42 +265,54 @@ Validação Zod adiciona ~1-5ms por requisição (negligenciável para UX).
 
 ## Abstração de Persistência (Repository Pattern)
 
-Repository Pattern desacopla a lógica de negócio da implementação de armazenamento.
+O Repository Pattern desacopla a lógica de negócio da implementação de armazenamento de dados (o banco de dados). Isso nos permite trocar a implementação (ex: de PostgreSQL para testes em memória) sem alterar a lógica de negócio nos serviços.
 
-### Interface Abstrata (`ITransactionRepository`)
+### Interfaces Abstratas
+
+Definimos interfaces para cada entidade de domínio, garantindo um contrato claro para a camada de dados.
+
+- **`ITransactionRepository`**: Define os métodos para o CRUD e sumarização de transações.
+- **`IUserRepository`**: Define os métodos para buscar e gerenciar usuários.
 
 ```typescript
+// src/lib/repositories/ITransaction.repository.ts
 export interface ITransactionRepository {
-  getAll(filters?: Record<string, any>): Promise<Transaction[]>;
+  getAll(userId: string, filters?: Record<string, any>): Promise<Transaction[]>;
   getById(id: string): Promise<Transaction | null>;
   create(data: TransactionInput): Promise<Transaction>;
   update(id: string, data: Partial<TransactionInput>): Promise<Transaction | null>;
   delete(id: string): Promise<boolean>;
-  getSummary(filters?: Record<string, any>): Promise<FinancialSummary>;
+  getSummary(userId: string, filters?: Record<string, any>): Promise<FinancialSummary>;
+}
+
+// src/lib/repositories/IUser.repository.ts
+export interface IUserRepository {
+    findByEmail(email: string): Promise<User | null>;
+    create(data: Omit<User, 'id'>): Promise<User>;
 }
 ```
 
-### Implementação: PostgreSQL (`PostgresTransactionRepository`)
+### Implementações com PostgreSQL
 
-- Integração com Prisma Client
-- Conversão de tipos: `Decimal` → `number`, `Date` → `string (YYYY-MM-DD)`
-- Suporte a filtros dinâmicos em `getAll()` e `getSummary()`
-- Tratamento robusto de erros
+- **`PostgresTransactionRepository`**: Implementa `ITransactionRepository` usando Prisma Client.
+- **`PostgresUserRepository`**: Implementa `IUserRepository` usando Prisma Client.
 
-**Complexidade Big-O**:
-
-- `getAll()`: O(log n) com índices
-- `getById()`: O(1) com índice primário
-- `create()`: O(log n) por atualização de índices
-- `delete()`: O(log n)
-- `getSummary()`: O(n) em memória (otimizável com DB aggregation)
+As implementações lidam com a conversão de tipos de dados (ex: `Decimal` do Prisma para `number` no domínio) e a construção de queries.
 
 ### Container de Injeção de Dependência
 
+O container em `src/lib/repositories/container.ts` centraliza a instanciação dos repositórios.
+
 ```typescript
 // src/lib/repositories/container.ts
-export const transactionRepository: ITransactionRepository =
-  new PostgresTransactionRepository();
+import { PostgresTransactionRepository } from "./postgresTransaction.repository";
+import { PostgresUserRepository } from "./postgresUser.repository";
+import { ITransactionRepository } from "./ITransaction.repository";
+import { IUserRepository } from "./IUser.repository";
+
+// Instancia e exporta os repositórios para serem usados pelos serviços
+export const transactionRepository: ITransactionRepository = new PostgresTransactionRepository();
+export const userRepository: IUserRepository = new PostgresUserRepository();
 ```
 
 ---
@@ -320,6 +333,8 @@ Consulte [docs/BACKEND.md](docs/BACKEND.md) para detalhes completos de payloads 
 ---
 
 ## Integração com IA
+
+**Nota**: A integração com IA é uma funcionalidade planejada para futuras versões e ainda não foi implementada. As seções abaixo descrevem a arquitetura proposta.
 
 Agente de IA executará análises internas e comandos simples de CRUD.
 
@@ -498,14 +513,14 @@ Consulte [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) para **ins
 - [x] **Fase 2** (3-4h): Repository Pattern + PostgreSQL Neon
 - [x] **Fase 3** (2-3h): Handlers CRUD (GET, POST, PUT, DELETE)
 - [x] **Fase 4** (1-2h): CI/CD com GitHub Actions + Jest automation
+- [x] **Fase 5** (3-4h): Autenticação (endpoints de registro/login, contexto de usuário e repositório).
 
 ### Próximas Fases
 
-- [ ] **Fase 5** (2h): Testes de integração (Postman/API testing)
-- [ ] **Fase 6** (3-4h): Integração Frontend ↔ API
-- [ ] **Fase 7** (4-6h): Integração IA (Gemini)
-- [ ] **Fase 8** (3-4h): Autenticação (NextAuth.js)
-- [ ] **Fase 9** (1-2h): Deploy (Vercel)
+- [ ] **Fase 6** (3-4h): Integração Frontend ↔ API (conectar UI com endpoints de transação e auth).
+- [ ] **Fase 7** (4-6h): Integração IA (Gemini) - *Planejado, não iniciado*.
+- [ ] **Fase 8** (2h): Testes de integração ponta-a-ponta (API e UI).
+- [ ] **Fase 9** (1-2h): Deploy (Vercel).
 
 ---
 
@@ -514,14 +529,14 @@ Consulte [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) para **ins
 ### Checklist
 
 - [x] **Validação de Entrada**: Zod em todos os endpoints
-- [x] **Sanitização**: Prisma usa parâmetros preparados
-- [x] **CI/CD Security**: GitHub Actions + security audit
-- [ ] **Autenticação**: JWT / NextAuth.js (futuro)
-- [ ] **Autorização**: Row-level security (futuro)
-- [ ] **Rate Limiting**: Middleware (futuro)
-- [ ] **CORS**: Configurar restritivamente (futuro)
-- [x] **Secrets**: `.env.local` não comitado, `.env.example` template
-- [ ] **Logging**: Auditoria de alterações (futuro)
+- [x] **Sanitização**: Prisma usa parâmetros preparados (previne SQL Injection)
+- [x] **CI/CD Security**: GitHub Actions + `pnpm audit`
+- [ ] **Autenticação**: Em progresso (endpoints de login/registro implementados, falta integração completa com NextAuth e JWT).
+- [ ] **Autorização**: Parcial (queries são filtradas por `userId` no repositório), mas falta Row-Level Security (RLS) no banco para uma camada de segurança adicional.
+- [ ] **Rate Limiting**: Middleware (futuro, para prevenir ataques de força bruta).
+- [ ] **CORS**: Configurar restritivamente em produção (futuro).
+- [x] **Secrets**: Uso de variáveis de ambiente (`.env.local`) não commitadas.
+- [ ] **Logging**: Auditoria de alterações (futuro).
 
 ### Recomendações Imediatas
 
