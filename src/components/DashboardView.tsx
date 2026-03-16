@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { TrendingUp, TrendingDown, DollarSign, Plus, Save, X } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils'; // Importa de utils
+import { formatCurrency } from '@/shared/utils'; // Importa de utils
 import { ChartDataItem } from '@/types/finance'; // Importa de types
 
 interface Props {

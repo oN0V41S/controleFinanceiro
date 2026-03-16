@@ -2,15 +2,15 @@
 'use client'; // Obrigatório, pois usa hooks
 
 import React from 'react';
-import useFinanceData from '@/hooks/useFinanceData';
+import useFinanceData from '@/shared/hooks/useFinanceData';
 
 // Importando os novos componentes de UI
 import FinanceHeader from '@/components/FinanceHeader';
-import FilterControls from '@/components/FilterControls';
+import FilterControls from '@/features/transactions/components/FilterControls';
 import DashboardView from '@/components/DashboardView';
-import TransactionsTable from '@/components/TransactionsTable';
-import TransactionModal from '@/components/TransactionModal';
-import ConfirmationModal from '@/components/ConfirmationModal';
+import TransactionsTable from '@/features/transactions/components/TransactionsTable';
+import TransactionModal from '@/features/transactions/components/TransactionModal';
+import ConfirmationModal from '@/features/transactions/components/ConfirmationModal';
 
 // O componente de página agora é um 'Contêiner'
 const FinancialManagerPage: React.FC = () => {

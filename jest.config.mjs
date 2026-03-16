@@ -39,7 +39,7 @@ const config = {
     "**/?(*.)+(spec|test).ts?(x)",
   ],
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
-  transformIgnorePatterns: ["/node_modules/"],
+  transformIgnorePatterns: ["/node_modules/(?!jose/.*)"],
 };
 
 export default createJestConfig(config);
