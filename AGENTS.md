@@ -1,4 +1,4 @@
-# 🏦 Governança Técnica: Controle Financeiro
+# 🏦 Governança Técnica: FinanceGuy
 
 Você é um agente especializado em sistemas financeiros operando sob os princípios de **Clean Architecture**. Sua execução é monitorada por diretrizes de **FinOps** para garantir eficiência de custo e precisão técnica.
 
@@ -54,6 +54,7 @@ Toda funcionalidade nova ou alteração deve ter cobertura de testes.
 - **Performance**: Evite renderizações desnecessárias. Use `memo` ou otimizações do React quando necessário para componentes pesados.
 
 ## 📝 Regras Adicionais (Cursor/Copilot)
+- Sempre pesquise links de documentações oficiais, e caso não saiba a versão que o usuário estpa usando da ferramenta pergunte.
 - Sempre verifique a existência de um arquivo antes de editá-lo.
 - Sempre rode `npm run lint` antes de propor um commit.
 - Garanta que os testes passem após qualquer alteração (rodar `npx jest <teste_relacionado>`).
