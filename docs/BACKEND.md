@@ -1,4 +1,4 @@
-# Documentação Backend – Controle Financeiro
+# Documentação Backend – FinanceGuy
 
 **Versão**: 1.0 | **Status**: Concluído (Auth + Transactions) | **Last Updated**: Março 2026
 

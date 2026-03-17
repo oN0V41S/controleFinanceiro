@@ -1,4 +1,4 @@
-# Documentação Técnica – Controle Financeiro
+# Documentação Técnica – FinanceGuy
 
 **Versão**: 1.0 | **Data**: Março 2026 | **Status**: Backend Concluído (Auth + Transactions)
 
@@ -22,7 +22,7 @@
 
 ## Visão Geral
 
-**Controle Financeiro** é uma aplicação Next.js full-stack para gestão de transações financeiras pessoais com suporte a:
+**FinanceGuy** é uma aplicação Next.js full-stack para gestão de transações financeiras pessoais com suporte a:
 
 - **Autenticação Segura**: Registro e login com tokens JWT (Cookies).
 - **CRUD Completo**: Criar, ler, atualizar e deletar transações.

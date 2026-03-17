@@ -1,4 +1,4 @@
-# Controle Financeiro
+# FinanceGuy
 
 **Português** | **[English](README-en.md)**
 

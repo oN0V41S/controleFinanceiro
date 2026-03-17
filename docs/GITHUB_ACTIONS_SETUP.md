@@ -52,7 +52,7 @@ Para ativar relatórios de cobertura automáticos nos PRs:
 
 1. **Acessar**: https://codecov.io/
 2. **Login com GitHub** e autorizar
-3. **Selecionar repositório**: `controleFinanceiro`
+3. **Selecionar repositório**: `financeguy`
 4. **Codecov token** será automático (já integrado no workflow)
 5. **Comentários automáticos** aparecerão nos PRs com cobertura
 
