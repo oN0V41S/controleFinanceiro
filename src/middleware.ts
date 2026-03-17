@@ -1,37 +1,47 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { verifyAuth } from './lib/auth-middleware';
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const authResult = await verifyAuth(request);
+// Rotas públicas que não precisam de autenticação
+const PUBLIC_ROUTES = ["/", "/login", "/register"];
+// Rotas que devem redirecionar usuários autenticados para o dashboard
+const AUTH_PAGES = ["/login", "/register"];
 
-  if (authResult instanceof NextResponse) {
-    return authResult;
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
+  const pathname = nextUrl.pathname;
+
+  // Verifica se a rota atual é uma rota pública (exata)
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  
+  // Verifica se a rota atual é uma página de autenticação
+  const isAuthPage = AUTH_PAGES.includes(pathname);
+
+  // Se o usuário não está logado e tenta acessar uma rota privada, redireciona para login
+  if (!isLoggedIn && !isPublicRoute) {
+    return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  const { userId } = authResult;
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-user-id', userId);
-
-  // Lógica de Proxy: Encaminha requisições de /api/proxy/* para um servidor externo
-  if (request.nextUrl.pathname.startsWith('/api/proxy')) {
-    // Removemos o prefixo /api/proxy e montamos a URL de destino
-    const targetUrl = new URL(request.nextUrl.pathname.replace('/api/proxy', ''), 'https://api.seu-servico-externo.com');
-    return NextResponse.rewrite(targetUrl, {
-      request: {
-        headers: requestHeaders,
-      },
-    });
+  // Se o usuário já está logado e tenta acessar /login ou /register, redireciona para o dashboard
+  if (isLoggedIn && isAuthPage) {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-}
+  return NextResponse.next();
+});
 
 // Configuração de quais rotas o middleware deve atuar
+// Exclui rotas de API e server actions
 export const config = {
-  matcher: ['/api/transactions/:path*', '/api/dashboard/:path*', '/app/api/proxy/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - api routes (API endpoints)
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - favicon.ico (favicon)
+     * - server actions (Next.js server actions)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*$).*)",
+  ],
 };
