@@ -12,7 +12,7 @@ const requirements = [
   { key: "symbol", label: "Um símbolo (@$!%*?&)", test: (pwd: string) => /[@$!%*?&]/.test(pwd) },
 ];
 
-export function PasswordRequirements({ passwordValue }: PasswordRequirementsProps) {
+export function PasswordRequirements({ passwordValue = "" }: PasswordRequirementsProps) {
   const isEmpty = !passwordValue || passwordValue.length === 0;
 
   return (
@@ -24,20 +24,26 @@ export function PasswordRequirements({ passwordValue }: PasswordRequirementsProp
           return (
             <div 
               key={req.key} 
-              className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
-                isEmpty ? "text-gray-400" : isValid ? "text-[#10B981]" : "text-[#E11D48]"
-              }`}
+              className="flex items-center gap-2 text-xs transition-colors duration-200"
+              data-testid={`password-requirement-${req.key}`}
             >
-              <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${
-                isEmpty 
-                  ? "bg-gray-100" 
+              <span
+                className={isEmpty 
+                  ? "bg-gray-100 w-4 h-4 rounded-full flex items-center justify-center text-[10px]"
                   : isValid 
-                    ? "bg-[#10B981] text-white" 
-                    : "bg-[#E11D48]/20 text-[#E11D48]"
-              }`}>
+                    ? "bg-[#10B981] text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px]"
+                    : "bg-[#E11D48]/20 text-[#E11D48] w-4 h-4 rounded-full flex items-center justify-center text-[10px]"
+                }
+                aria-hidden="true"
+              >
                 {isEmpty ? "○" : isValid ? "✓" : "✕"}
               </span>
-              <span className={isValid && !isEmpty ? "line-through" : ""}>{req.label}</span>
+              <span 
+                className={isValid && !isEmpty ? "line-through" : ""}
+                aria-label={`${req.label}, ${isValid ? 'satisfeito' : 'não satisfeito'}`}
+              >
+                {req.label}
+              </span>
             </div>
           );
         })}

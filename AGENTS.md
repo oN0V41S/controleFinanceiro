@@ -4,7 +4,7 @@ Você é um agente especializado em sistemas financeiros operando sob os princí
 
 ## 🏗️ Princípios Arquiteturais
 - **Clean Architecture**: Mantenha uma separação clara de camadas (`domain`, `use-cases`, `repositories`, `components`, `services`).
-- **Linguagem**: TypeScript 5.9+.
+- **Tecnologias**: Next.js 16+, React 19+, TypeScript 5.9+, Prisma 5.22+, Jest 30+.
 - **Consistência**: Use Prisma 5.22 e Zod para todas as interações de banco de dados e validações.
 - **Princípio da Responsabilidade Única**: Cada arquivo/função deve ter uma única responsabilidade clara.
 
@@ -54,7 +54,8 @@ Toda funcionalidade nova ou alteração deve ter cobertura de testes.
 - **Performance**: Evite renderizações desnecessárias. Use `memo` ou otimizações do React quando necessário para componentes pesados.
 
 ## 📝 Regras Adicionais (Cursor/Copilot)
-- Sempre pesquise links de documentações oficiais, e caso não saiba a versão que o usuário estpa usando da ferramenta pergunte.
+- Sempre pesquise links de documentações oficiais, e caso não saiba a versão que o usuário está usando da ferramenta pergunte.
+- SEMPRE utilize sub-agents para tarefas extensas. Quebre tarefas complexas em subtarefas menores se o usuário não o fizer.
 - Sempre verifique a existência de um arquivo antes de editá-lo.
 - Sempre rode `npm run lint` antes de propor um commit.
 - Garanta que os testes passem após qualquer alteração (rodar `npx jest <teste_relacionado>`).
@@ -77,5 +78,76 @@ Toda funcionalidade nova ou alteração deve ter cobertura de testes.
 - Reporte problemas estruturais através do fluxo `/bug` ou via issue no GitHub.
 - Mantenha a documentação atualizada conforme refatora o código.
 
-When you need to search docs, use `context7` tools.
-When you need use RAG, use pinecone.
+## 🧩 Diretrizes Específicas do Projeto
+
+### Componentes de UI com base em shadcn-ui
+- Utilize os componentes do shadcn-ui como base para todos os elementos de interface.
+- Siga rigorosamente o guia definido em `@docs/VISUAL_IDENTITY.md` para padronização visual.
+- Para formulários de autenticação, utilize exatamente as estruturas definidas na seção 8 do VISUAL_IDENTITY.md.
+- Cores da palette "Balance" devem ser utilizadas conforme definidas:
+  - Primária: Deep Emerald `#064E3B`
+  - Secundária: Slate Gray `#334155`
+  - Fundo: Ice White `#F8FAFC`
+  - Entradas: Success Mint `#10B981`
+  - Saídas: Rosewood `#E11D48`
+  - Destaque: Amber `#F59E0B`
+- Componentes shadcn-ui essenciais para este projeto: `form`, `input`, `button`, `card`, `label`, `form-field`, `form-item`, `form-control`, `form-message`.
+
+### Criar Testes Antes de Criar Funções (TDD)
+- Antes de implementar qualquer função ou componente, escreva os testes unitários correspondentes.
+- Siga a estrutura de testes existente em `src/features/*/__tests__` ou `src/app/*/__tests__`.
+- Utilize Jest como framework de teste e React Testing Library para componentes React.
+- Para funções puras, teste casos de borda e valores esperados.
+- Para componentes, teste renderização, interações e estados.
+- Nomeie os arquivos de teste seguindo a convensão: `[nome-do-arquivo].test.ts` ou `[nome-do-arquivo].spec.ts`.
+
+### Arquitetura Atual do Projeto
+A aplicação segue Clean Architecture com estas camadas principais:
+```
+src/
+├── app/
+│   ├── api/                # Handlers proxy que invocam serviços das features
+│   │   ├── auth/
+│   │   └── transactions/
+│   ├── (auth)/             # Rotas de autenticação
+│   ├── dashboard/          # Rotas do dashboard
+│   └── ...                 # Outras rotas
+├── core/
+│   └── container.ts        # Injeção de dependência (DI)
+├── features/               # Domínio (Clean Architecture)
+│   ├── auth/
+│   │   ├── components/     # Componentes de UI
+│   │   ├── actions/        # Server actions
+│   │   ├── __tests__/      # Testes
+│   │   ├── schemas/        # Schemas Zod
+│   │   └── ...             # Services, repositories
+│   └── transactions/
+│       ├── components/     # Componentes de transação
+│       ├── __tests__/      # Testes
+│       └── ...             # Services, repositories, validations
+├── lib/
+│   ├── prisma.ts           # Singleton PrismaClient
+│   └── auth-middleware.ts  # Segurança JWT
+├── shared/                 # Tipos e utilitários globais
+│   ├── hooks/              # Custom hooks
+│   ├── utils.ts            # Utilitários compartilhados
+│   └── types.ts            # Tipos globais
+└── middleware.ts           # Proteção de rotas e injeção de x-user-id
+```
+
+### Integração com VISUAL_IDENTITY.md
+Este documento define a identidade visual completa do projeto e deve ser seguido rigorosamente:
+- **Paleta de Cores**: Utilize as cores definidas na seção 2 para todos os elementos UI.
+- **Tipografia**: Siga as especificações da seção 3 para headings, body e valores monetários.
+- **Elementos Visuais**: Implemente as especificações de seção 5 (bordas, sombras, iconografia, empty states).
+- **Formulários**: Siga exatamente as estruturas definidas na seção 8 para formulários de autenticação.
+- **Estados de Carregamento**: Implemente os spinners e estados de loading conforme seção 8.9.
+- **Feedback Visual**: Utilize os indicadores de validação em tempo real da seção 8.7 e indicadores de força de senha da seção 8.8.
+
+### Fluxo de Desenvolvimento Recomendado
+1. Antes de escrever qualquer código, escreva os testes que definem o comportamento esperado.
+2. Implemente a funcionalidade mínima para passar nos testes (TDD).
+3. Refatore o código seguindo as diretrizes de estilo e arquitetura.
+4. Execute `npm run lint` para verificar problemas de estilo.
+5. Execute os testes novamente para garantir que nada foi quebrado.
+6. Repita o processo até completar a funcionalidade.

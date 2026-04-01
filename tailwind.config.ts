@@ -7,7 +7,26 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brand: {
+          primary: 'var(--brand-primary)',
+          secondary: 'var(--brand-secondary)',
+          background: 'var(--brand-background)',
+        },
+        finance: {
+          income: 'var(--finance-income)',
+          expense: 'var(--finance-expense)',
+          recurring: 'var(--finance-recurring)',
+        },
+      },
+      backgroundColor: {
+        background: 'var(--background)',
+      },
+      textColor: {
+        foreground: 'var(--foreground)',
+      },
+    },
   },
   plugins: [],
 };

@@ -3,8 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F8FAFC;
+  --foreground: #334155;
+  
+  /* Brand */
+  --brand-primary: #064E3B;
+  --brand-secondary: #334155;
+  --brand-background: #F8FAFC;
+
+  /* Finance */
+  --finance-income: #10B981;
+  --finance-expense: #E11D48;
+  --finance-recurring: #F59E0B;
 }
 
 @media (prefers-color-scheme: dark) {

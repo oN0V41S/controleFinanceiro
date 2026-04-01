@@ -7,24 +7,11 @@ import { registerAction } from "@/features/auth/actions/registerAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormAlert, FormError } from "./ui";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PasswordRequirements } from "./PasswordRequirements";
-
-// Validation check functions
-const validateField = {
-  name: (value: string) => value && value.trim().length >= 2,
-  nickname: (value: string) => value && value.trim().length >= 2,
-  email: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-  password: (value: string) => {
-    if (!value || value.length < 8) return false;
-    if (!/[A-Z]/.test(value)) return false;
-    if (!/[a-z]/.test(value)) return false;
-    if (!/\d/.test(value)) return false;
-    if (!/[@$!%*?&]/.test(value)) return false;
-    return true;
-  },
-};
+import { Loader2 } from "lucide-react";
 
 export function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +21,6 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    trigger,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
@@ -42,19 +28,8 @@ export function RegisterForm() {
     mode: "onChange",
   });
 
-  // Watch all fields for validation status
-  const watchName = watch("name");
-  const watchNickname = watch("nickname");
-  const watchEmail = watch("email");
+  // Watch password field for requirements display
   const watchPassword = watch("password");
-
-  // Check if all fields are valid
-  const isNameValid = validateField.name(watchName || "");
-  const isNicknameValid = validateField.nickname(watchNickname || "");
-  const isEmailValid = validateField.email(watchEmail || "");
-  const isPasswordValid = validateField.password(watchPassword || "");
-
-  const isFormValid = isNameValid && isNicknameValid && isEmailValid && isPasswordValid;
 
   const onSubmit = async (data: RegisterInput) => {
     const result = await registerAction(data);
@@ -67,74 +42,93 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-3">
-        <Label htmlFor="name" className="text-[#334155] font-medium">Nome</Label>
-        <Input 
-          id="name" 
-          className={`rounded-xl border-gray-200 focus:border-[#064E3B] focus:ring-[#064E3B] h-12 px-4 text-[#334155] placeholder:text-gray-400 ${
-            watchName && !isNameValid ? "border-[#E11D48] focus:border-[#E11D48] focus:ring-[#E11D48]" : ""
-          }`}
-          placeholder="Seu nome completo"
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name" data-testid="label-name" className="text-brand-secondary font-medium">
+          Nome completo
+        </Label>
+        <Input
+          data-testid="name"
+          id="name"
+          type="text"
+          placeholder="João Silva"
+          className="h-12 px-4 rounded-xl border-gray-200 bg-white placeholder:text-gray-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
           aria-invalid={!!errors.name}
-          {...register("name", { onChange: () => trigger("name") })} 
+          {...register("name")}
         />
-        {errors.name && <p className="text-sm text-[#E11D48]">{errors.name.message}</p>}
+        {errors.name && (
+          <FormError message={errors.name.message} />
+        )}
       </div>
-      <div className="space-y-3">
-        <Label htmlFor="nickname" className="text-[#334155] font-medium">Apelido</Label>
-        <Input 
-          id="nickname" 
-          className={`rounded-xl border-gray-200 focus:border-[#064E3B] focus:ring-[#064E3B] h-12 px-4 text-[#334155] placeholder:text-gray-400 ${
-            watchNickname && !isNicknameValid ? "border-[#E11D48] focus:border-[#E11D48] focus:ring-[#E11D48]" : ""
-          }`}
+      
+      <div className="space-y-2">
+        <Label htmlFor="nickname" data-testid="label-nickname" className="text-brand-secondary font-medium">
+          Apelido
+        </Label>
+        <Input
+          data-testid="nickname"
+          id="nickname"
+          type="text"
           placeholder="Como você quer ser chamado"
+          className="h-12 px-4 rounded-xl border-gray-200 bg-white placeholder:text-gray-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
           aria-invalid={!!errors.nickname}
-          {...register("nickname", { onChange: () => trigger("nickname") })} 
+          {...register("nickname")}
         />
-        {errors.nickname && <p className="text-sm text-[#E11D48]">{errors.nickname.message}</p>}
+        {errors.nickname && (
+          <FormError message={errors.nickname.message} />
+        )}
       </div>
-      <div className="space-y-3">
-        <Label htmlFor="email" className="text-[#334155] font-medium">Email</Label>
-        <Input 
-          id="email" 
-          type="email" 
-          className={`rounded-xl border-gray-200 focus:border-[#064E3B] focus:ring-[#064E3B] h-12 px-4 text-[#334155] placeholder:text-gray-400 ${
-            watchEmail && !isEmailValid ? "border-[#E11D48] focus:border-[#E11D48] focus:ring-[#E11D48]" : ""
-          }`}
+      
+      <div className="space-y-2">
+        <Label htmlFor="email" data-testid="label-email" className="text-brand-secondary font-medium">
+          Endereço de e-mail
+        </Label>
+        <Input
+          data-testid="email"
+          id="email"
+          type="email"
           placeholder="seu@email.com"
+          className="h-12 px-4 rounded-xl border-gray-200 bg-white placeholder:text-gray-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
           aria-invalid={!!errors.email}
-          {...register("email", { onChange: () => trigger("email") })} 
+          {...register("email")}
         />
-        {errors.email && <p className="text-sm text-[#E11D48]">{errors.email.message}</p>}
+        {errors.email && (
+          <FormError message={errors.email.message} />
+        )}
       </div>
-      <div className="space-y-3">
-        <Label htmlFor="password" className="text-[#334155] font-medium">Senha</Label>
-        <Input 
-          id="password" 
-          type="password" 
-          className={`rounded-xl border-gray-200 focus:border-[#064E3B] focus:ring-[#064E3B] h-12 px-4 text-[#334155] placeholder:text-gray-400 ${
-            watchPassword && !isPasswordValid ? "border-[#E11D48] focus:border-[#E11D48] focus:ring-[#E11D48]" : ""
-          }`}
+      
+      <div className="space-y-2">
+        <Label htmlFor="password" data-testid="label-password" className="text-brand-secondary font-medium">
+          Senha
+        </Label>
+        <Input
+          data-testid="password"
+          id="password"
+          type="password"
           placeholder="••••••••"
+          className="h-12 px-4 rounded-xl border-gray-200 bg-white placeholder:text-gray-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
           aria-invalid={!!errors.password}
-          {...register("password", { onChange: () => trigger("password") })} 
+          {...register("password")}
         />
-        {errors.password && <p className="text-sm text-[#E11D48]">{errors.password.message}</p>}
-        <PasswordRequirements passwordValue={watchPassword || ""} />
+        <PasswordRequirements passwordValue={watchPassword} />
       </div>
-      {error && <p className="text-sm text-[#E11D48] bg-[#E11D48]/10 p-3 rounded-lg">{error}</p>}
-      {success && <p className="text-sm text-[#10B981] bg-[#10B981]/10 p-3 rounded-lg">{success}</p>}
-      <Button 
-        type="submit" 
-        disabled={isSubmitting || !isFormValid} 
-        className={`w-full font-semibold py-6 rounded-xl transition-all duration-200 ${
-          isFormValid 
-            ? "bg-[#064E3B] hover:bg-[#064E3B]/90 text-white" 
-            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-        }`}
+      
+      <FormAlert type="error" message={error || ""} />
+      <FormAlert type="success" message={success || ""} />
+      
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full h-12 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-white font-medium transition-colors"
       >
-        {isSubmitting ? "Criando conta..." : "Criar conta"}
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            Criando conta...
+          </>
+        ) : (
+          "Criar conta"
+        )}
       </Button>
     </form>
   );

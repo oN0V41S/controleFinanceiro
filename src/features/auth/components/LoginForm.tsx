@@ -7,7 +7,9 @@ import { loginAction } from "@/features/auth/actions/loginAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormAlert, FormError } from "./ui";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +17,6 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    trigger,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({
     resolver: zodResolver(LoginSchema),
@@ -30,38 +31,58 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-3">
-        <Label htmlFor="email" className="text-[#334155] font-medium">Email</Label>
-        <Input 
-          id="email" 
-          type="email" 
-          className="rounded-xl border-gray-200 focus:border-[#064E3B] focus:ring-[#064E3B] h-12 px-4 text-[#334155] placeholder:text-gray-400"
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-brand-secondary font-medium">
+          Endereço de e-mail
+        </Label>
+        <Input
+          id="email"
+          type="email"
           placeholder="seu@email.com"
+          className="h-12 px-4 rounded-xl border-gray-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
           aria-invalid={!!errors.email}
-          {...register("email", { onChange: () => trigger("email") })} 
+          
+          {...register("email")}
         />
-        {errors.email && <p className="text-sm text-[#E11D48]">{errors.email.message}</p>}
+        {errors.email && (
+          <FormError message={errors.email.message} />
+        )}
       </div>
-      <div className="space-y-3">
-        <Label htmlFor="password" className="text-[#334155] font-medium">Senha</Label>
-        <Input 
-          id="password" 
-          type="password" 
-          className="rounded-xl border-gray-200 focus:border-[#064E3B] focus:ring-[#064E3B] h-12 px-4 text-[#334155] placeholder:text-gray-400"
+      
+      <div className="space-y-2">
+        <Label htmlFor="password" className="text-brand-secondary font-medium">
+          Senha
+        </Label>
+        <Input
+          id="password"
+          type="password"
           placeholder="••••••••"
+          className="h-12 px-4 rounded-xl border-gray-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
           aria-invalid={!!errors.password}
-          {...register("password", { onChange: () => trigger("password") })} 
+          {...register("password")}
         />
-        {errors.password && <p className="text-sm text-[#E11D48]">{errors.password.message}</p>}
+        {errors.password && (
+          <FormError message={errors.password.message} />
+        )}
       </div>
-      {error && <p className="text-sm text-[#E11D48] bg-[#E11D48]/10 p-3 rounded-lg">{error}</p>}
-      <Button 
-        type="submit" 
-        disabled={isSubmitting} 
-        className="w-full bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-semibold py-6 rounded-xl transition-all duration-200"
+      
+      <FormAlert type="error" message={error || ""} />
+      
+      <Button
+        type="submit"
+        variant={"default"}
+        disabled={isSubmitting}
+        className="w-full h-12 rounded-xl text-white font-medium transition-colors"
       >
-        {isSubmitting ? "Entrando..." : "Entrar"}
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            Entrando...
+          </>
+        ) : (
+          "Entrar na conta"
+        )}
       </Button>
     </form>
   );
