@@ -3,11 +3,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { LoginSchema } from "@/features/auth/schemas/auth.schema";
-import { AuthService } from "@/features/auth/auth.service";
 import { PrismaUserRepository } from "@/features/auth/PrismaUserRepository";
-import bcrypt from "bcryptjs";
+import { AuthService } from "@/features/auth/auth.service";
 
-// Inicializa o repositório e o serviço
 const userRepository = new PrismaUserRepository(prisma);
 const authService = new AuthService(userRepository);
 
@@ -15,6 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   secret: process.env.AUTH_SECRET,
   trustHost: true,
+  session: { strategy: "jwt" },
   providers: [
     Credentials({
       credentials: {
@@ -30,20 +29,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { email, password } = validatedFields.data;
 
-        // Busca o usuário usando o service
-        const user = await prisma.user.findUnique({ where: { email } });
-        
-        if (!user || !user.password) {
+        try {
+          const user = await authService.login({ email, password });
+          return { id: user.id, email: user.email, name: user.name };
+        } catch {
           return null;
         }
-
-        const passwordsMatch = await bcrypt.compare(password, user.password);
-
-        if (!passwordsMatch) {
-          return null;
-        }
-
-        return { id: user.id, email: user.email, name: user.name };
       },
     }),
   ],

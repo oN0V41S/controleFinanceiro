@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { logoutAction } from '@/features/auth/actions/logoutAction';
 
 interface User {
   name: string | null;
@@ -23,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Recupera o perfil do usuário do localStorage ao carregar a página
     const savedUser = localStorage.getItem('user_profile');
     if (savedUser) {
       try {
@@ -40,10 +40,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('user_profile', JSON.stringify(userData));
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     localStorage.removeItem('user_profile');
-    // A limpeza do cookie auth_token deve ser feita chamando a rota de logout
+    await logoutAction();
   };
 
   return (

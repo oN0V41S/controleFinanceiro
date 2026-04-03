@@ -67,7 +67,7 @@ export function LoginForm() {
         )}
       </div>
       
-      <FormAlert type="error" message={error || ""} />
+      <FormAlert type="error" message={error || ""}/>
       
       <Button
         type="submit"

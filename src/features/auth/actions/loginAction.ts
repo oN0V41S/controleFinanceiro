@@ -3,6 +3,7 @@
 import { signIn } from "@/auth";
 import { LoginSchema, LoginInput } from "@/features/auth/schemas/auth.schema";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 export async function loginAction(data: LoginInput) {
   const validatedFields = LoginSchema.safeParse(data);
@@ -17,8 +18,9 @@ export async function loginAction(data: LoginInput) {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
+      redirect: false,
     });
+    redirect("/dashboard");
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

@@ -53,7 +53,10 @@ Toda funcionalidade nova ou alteração deve ter cobertura de testes.
 - **Resiliência**: Se ocorrer um erro recorrente, pare a execução, analise o log e solicite feedback. Evite loops de erro.
 - **Performance**: Evite renderizações desnecessárias. Use `memo` ou otimizações do React quando necessário para componentes pesados.
 
-## 📝 Regras Adicionais (Cursor/Copilot)
+## 🤖 Automação e Workflow (Skills & Commands)
+- **Proatividade**: O agente DEVE utilizar automaticamente as Skills (`domain-scaffold`, `prisma-verify`, `jest-test-gen`, `shadcn-integrator`) e Commands (`verify-full`, `db-safe-push`, `feature-audit`) para garantir a conformidade arquitetural, caso o usuário não os invoque explicitamente.
+- **Governança Automatizada**: Antes de finalizar qualquer feature, execute `feature-audit` e `verify-full` para garantir que o código cumpre os padrões estabelecidos antes do commit.
+
 - Sempre pesquise links de documentações oficiais, e caso não saiba a versão que o usuário está usando da ferramenta pergunte.
 - SEMPRE utilize sub-agents para tarefas extensas. Quebre tarefas complexas em subtarefas menores se o usuário não o fizer.
 - Sempre verifique a existência de um arquivo antes de editá-lo.
@@ -101,6 +104,17 @@ Toda funcionalidade nova ou alteração deve ter cobertura de testes.
 - Para componentes, teste renderização, interações e estados.
 - Nomeie os arquivos de teste seguindo a convensão: `[nome-do-arquivo].test.ts` ou `[nome-do-arquivo].spec.ts`.
 
+### Middleware / Proxy (Next.js 16+)
+- **Localização**: `src/proxy.ts` (NÃO use `middleware.ts` na raiz).
+- **Funcionamento**: No Next.js 16+, o arquivo de interceptação de rotas deve estar em `src/proxy.ts` e ser exportado como `default`.
+- **Regra**: Sempre utilize `src/proxy.ts` para proteção de rotas, redirecionamentos e injeção de headers. Nunca crie `middleware.ts` na raiz do projeto.
+- **Configuração**: O `matcher` deve excluir rotas de API, arquivos estáticos e server actions:
+  ```typescript
+  export const config = {
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*$).*)"],
+  };
+  ```
+
 ### Arquitetura Atual do Projeto
 A aplicação segue Clean Architecture com estas camadas principais:
 ```
@@ -132,7 +146,7 @@ src/
 │   ├── hooks/              # Custom hooks
 │   ├── utils.ts            # Utilitários compartilhados
 │   └── types.ts            # Tipos globais
-└── middleware.ts           # Proteção de rotas e injeção de x-user-id
+└── proxy.ts                # Proteção de rotas e injeção de x-user-id (Next.js 16+)
 ```
 
 ### Integração com VISUAL_IDENTITY.md
@@ -151,3 +165,52 @@ Este documento define a identidade visual completa do projeto e deve ser seguido
 4. Execute `npm run lint` para verificar problemas de estilo.
 5. Execute os testes novamente para garantir que nada foi quebrado.
 6. Repita o processo até completar a funcionalidade.
+
+## 📚 Autenticação (NextAuth v5)
+
+### Configuração do NextAuth
+O arquivo principal é `src/auth.ts` que deve exportar:
+- `handlers` - para as rotas API (`GET` e `POST`)
+- `signIn`, `signOut`, `auth` - para uso em Server Actions e componentes
+
+### Rotas API
+Crie o arquivo `src/app/api/auth/[...nextauth]/route.ts`:
+```typescript
+export { GET, POST } from "@/auth"
+```
+
+### Variáveis de Ambiente
+```
+AUTH_SECRET=gerado com npx auth secret
+AUTH_TRUST_HOST=true
+DATABASE_URL=postgresql://...
+NEXTAUTH_URL=https://...
+```
+
+### Configuração de Sessão
+Para o Credentials Provider, use estratégia JWT:
+```typescript
+session: { strategy: "jwt" }
+```
+
+### Server Actions
+Use `signIn` e `signOut` diretamente nas Server Actions:
+```typescript
+import { signIn } from "@/auth";
+
+await signIn("credentials", {
+  email,
+  password,
+  redirect: false,
+});
+```
+
+### Configuração do Next.js para Server Actions
+Para ambientes com proxy (Vercel, Codespaces), adicione em `next.config.ts`:
+```typescript
+experimental: {
+  serverActions: {
+    allowedOrigins: ["seu-dominio.vercel.app", "localhost:3000"],
+  },
+},
+```
