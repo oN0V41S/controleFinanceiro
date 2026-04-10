@@ -1,8 +1,9 @@
 "use client";
 
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { logoutAction } from '@/features/auth/actions/logoutAction';
 
 interface FinanceHeaderProps {
     openModal: () => void;
@@ -16,10 +17,10 @@ interface HeaderButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 }
 
 const headerButtonVariants: Record<HeaderButtonVariant, string> = {
-    primary: "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary/50",
-    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-secondary/50",
-    outline: "border-2 border-primary bg-transparent text-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary/50",
-    ghost: "bg-transparent text-foreground hover:bg-muted focus:ring-2 focus:ring-muted/50",
+    primary: "bg-primary-container text-on-primary hover:bg-primary/80 focus:ring-2 focus:ring-primary/50",
+    secondary: "bg-secondary-container text-on-secondary hover:bg-secondary/80 focus:ring-2 focus:ring-secondary/50",
+    outline: "border border-outline-variant bg-transparent text-primary hover:bg-surface-container-low focus:ring-2 focus:ring-primary/50",
+    ghost: "bg-transparent text-on-surface hover:bg-surface-container-low focus:ring-2 focus:ring-surface-variant/50",
 };
 
 function HeaderButton({ 
@@ -81,22 +82,36 @@ function LoadingSpinner({ className }: { className?: string }) {
 }
 
 const FinanceHeader: React.FC<FinanceHeaderProps> = ({ openModal }) => {
+    const handleLogout = async () => {
+        await logoutAction();
+    };
+
     return (
-        <header className="bg-background shadow-sm sticky top-0 z-10 border-b border-border/40">
+        <header className="sticky top-0 z-10 bg-surface-container-low">
             <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
                 <div className="space-y-1">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Controle Financeiro</h1>
-                    <p className="text-sm text-muted-foreground hidden sm:block">
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-on-surface">Controle Financeiro</h1>
+                    <p className="text-sm text-on-surface-variant hidden sm:block">
                         Gerencie suas finanças de forma simples e intuitiva.
                     </p>
                 </div>
-                <HeaderButton 
-                    onClick={openModal}
-                    className="hidden sm:flex items-center gap-2 py-2.5 px-4 text-sm"
-                >
-                    <Plus className="h-5 w-5" />
-                    <span>Nova Transação</span>
-                </HeaderButton>
+                <div className="flex items-center gap-2">
+                    <HeaderButton 
+                        onClick={openModal}
+                        className="hidden sm:flex items-center gap-2 py-2.5 px-4 text-sm"
+                    >
+                        <Plus className="h-5 w-5" />
+                        <span>Nova Transação</span>
+                    </HeaderButton>
+                    <HeaderButton 
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="flex items-center gap-2 py-2.5 px-4 text-sm"
+                    >
+                        <LogOut className="h-5 w-5" />
+                        <span className="hidden sm:inline">Sair</span>
+                    </HeaderButton>
+                </div>
             </div>
         </header>
     );

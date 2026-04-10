@@ -87,13 +87,11 @@ Toda funcionalidade nova ou alteração deve ter cobertura de testes.
 - Utilize os componentes do shadcn-ui como base para todos os elementos de interface.
 - Siga rigorosamente o guia definido em `@docs/VISUAL_IDENTITY.md` para padronização visual.
 - Para formulários de autenticação, utilize exatamente as estruturas definidas na seção 8 do VISUAL_IDENTITY.md.
-- Cores da palette "Balance" devem ser utilizadas conforme definidas:
-  - Primária: Deep Emerald `#064E3B`
-  - Secundária: Slate Gray `#334155`
-  - Fundo: Ice White `#F8FAFC`
-  - Entradas: Success Mint `#10B981`
-  - Saídas: Rosewood `#E11D48`
-  - Destaque: Amber `#F59E0B`
+- Cores da palette "Linear Financial" devem ser utilizadas conforme definidas:
+  - Primária: Trust Blue `#2563EB`
+  - Secundária: Insight Violet `#8B5CF6`
+  - Fundo: Deep Ink `#131315`
+  - Sucesso: Success Mint `#10B981`
 - Componentes shadcn-ui essenciais para este projeto: `form`, `input`, `button`, `card`, `label`, `form-field`, `form-item`, `form-control`, `form-message`.
 
 ### Criar Testes Antes de Criar Funções (TDD)

@@ -11,28 +11,19 @@ A marca deve transmitir **segurança** e **clareza**. O design é focado em redu
 
 ---
 
-## 2. Paleta de Cores (The "Balance" Palette)
-As cores foram escolhidas para diferenciar claramente as categorias financeiras sem perder o profissionalismo.
-
-| Uso | Nome | Hexadecimal | Significado |
-| :--- | :--- | :--- | :--- |
-| **Primária** | Deep Emerald | `#064E3B` | Confiança, dinheiro e estabilidade. |
-| **Secundária** | Slate Gray | `#334155` | Estrutura e base tecnológica. |
-| **Fundo** | Ice White | `#F8FAFC` | Limpeza visual e foco no conteúdo. |
-| **Entradas** | Success Mint | `#10B981` | Crescimento e receita (Positive flow). |
-| **Saídas** | Rosewood | `#E11D48` | Alerta e despesa (Attention required). |
-| **Destaque** | Amber | `#F59E0B` | Parcelamentos e recorrência. |
-
----
+## 2. Paleta de Cores (Linear Financial Dark Mode)
+A interface utiliza uma paleta Dark Mode otimizada para legibilidade de dados financeiros.
+| Uso | Hexadecimal |
+| :--- | :--- |
+| **Primária** | `#2563EB` (Trust Blue) |
+| **Secundária** | `#8B5CF6` (Insight Violet) |
+| **Fundo (Canvas)** | `#131315` (Deep Ink) |
+| **Sucesso** | `#10B981` (Success Mint) |
 
 ## 3. Tipografia
-A escolha tipográfica reforça a modernidade da stack (Next.js 16 / React 19).
-
-*   **Principal (Headings):** `Inter` ou `Geist Sans`. Peso: *SemiBold* (600).
-    *   *Por que:* Excelente legibilidade em telas e ar moderno/tech.
-*   **Secundária (Body/Inputs):** `Inter`. Peso: *Regular* (400).
-*   **Mono (Valores/IDs):** `JetBrains Mono`.
-    *   *Por que:* Para valores monetários e IDs de transação, garantindo alinhamento perfeito dos caracteres numéricos.
+*   **Headings/Body:** `Inter`.
+*   **Labels/UI Elements:** `Space Grotesk`.
+*   **Monospaced (Finance):** `JetBrains Mono`.
 
 ---
 

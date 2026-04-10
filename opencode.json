@@ -7,5 +7,15 @@
     "plan": {
       "model": "google/gemini-2.5-flash-lite"
     }
+  },
+  "mcp": {
+    "stitch": {
+      "type": "remote",
+      "url": "https://stitch.googleapis.com/mcp",
+      "enabled": true,
+      "headers": {
+        "X-Goog-Api-Key": "YOUR_API_KEY_HERE"
+      }
+    }
   }
 }
