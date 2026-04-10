@@ -31,40 +31,42 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-brand-secondary font-medium">
-          Endereço de e-mail
-        </Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="seu@email.com"
-          className="h-12 px-4 rounded-xl border-gray-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
-          aria-invalid={!!errors.email}
-          
-          {...register("email")}
-        />
-        {errors.email && (
-          <FormError message={errors.email.message} />
-        )}
-      </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-brand-secondary font-medium">
-          Senha
-        </Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          className="h-12 px-4 rounded-xl border-gray-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all duration-200"
-          aria-invalid={!!errors.password}
-          {...register("password")}
-        />
-        {errors.password && (
-          <FormError message={errors.password.message} />
-        )}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-brand-secondary font-medium">
+            Endereço de e-mail
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="seu@email.com"
+            className="h-12 px-4 rounded-xl border-outline bg-background placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all duration-200"
+            aria-invalid={!!errors.email}
+            
+            {...register("email")}
+          />
+          {errors.email && (
+            <FormError message={errors.email.message} />
+          )}
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-brand-secondary font-medium">
+            Senha
+          </Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            className="h-12 px-4 rounded-xl border-outline bg-background placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all duration-200"
+            aria-invalid={!!errors.password}
+            {...register("password")}
+          />
+          {errors.password && (
+            <FormError message={errors.password.message} />
+          )}
+        </div>
       </div>
       
       <FormAlert type="error" message={error || ""}/>
@@ -73,7 +75,7 @@ export function LoginForm() {
         type="submit"
         variant={"default"}
         disabled={isSubmitting}
-        className="w-full h-12 rounded-xl text-white font-medium transition-colors"
+        className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-medium transition-colors"
       >
         {isSubmitting ? (
           <>
