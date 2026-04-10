@@ -1,61 +1,68 @@
-import { IUserRepository, UserRecord } from "./IUser.repository";
-import { RegisterInput, LoginInput, loginSchema, registerSchema } from "./validations";
+import { RegisterInput, LoginInput } from "./schemas/auth.schema";
+import { UserRecord, IUserRepository } from "./IUser.repository";
 import bcrypt from "bcryptjs";
-import { SignJWT } from "jose";
 
 export class AuthService {
-  // Injeção de dependência
+  // Injeção de dependência do repositório
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async register(data: unknown) {
-    const validatedData = registerSchema.parse(data);
-
-    // Validação de regra de negócio
-    const existingUser = await this.userRepository.findByEmail(validatedData.email);
+  async register(data: RegisterInput): Promise<Omit<UserRecord, 'password'> | null> {
+    // Validação já feita pela camada de schema
+    const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
       throw new Error("Este email já está em uso.");
     }
 
-    // Hash da senha
-    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+    // Hash da senha usando bcryptjs
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // Persistência
-    return this.userRepository.create(validatedData, hashedPassword);
+    // Persistência via repositório
+    // O método create do repositório pode precisar ser adaptado para aceitar `hashedPassword`
+    return this.userRepository.create(data, hashedPassword);
   }
 
-  async login(data: unknown) {
-    const validatedData = loginSchema.parse(data);
+  async login(data: LoginInput): Promise<Omit<UserRecord, 'password'> & { token?: string }> {
+    // Validação já feita pela camada de schema
+    const user = await this.userRepository.findByEmail(data.email);
 
-    const user = await this.userRepository.findByEmail(validatedData.email);
-    
-    // Retorno genérico para segurança (OWASP)
+    // Retorno genérico para segurança (OWASP Top 10 - Injection/Authentication)
     if (!user || !user.password) {
       throw new Error("Credenciais inválidas.");
     }
 
-    const isValidPassword = await bcrypt.compare(validatedData.password, user.password);
+    // Validação da senha com bcrypt
+    const isValidPassword = await bcrypt.compare(data.password, user.password);
     if (!isValidPassword) {
       throw new Error("Credenciais inválidas.");
     }
 
-    const token = await this.generateToken(user);
-
-    const { password: _, id: __, ...userWithoutIdOrPassword } = user;
-    return { ...userWithoutIdOrPassword, token };
+    // Se a senha for válida, retornamos o usuário (sem a senha) e um placeholder para o token.
+    // A geração do token será feita pelo NextAuth.js.
+    const { password, ...userWithoutPassword } = user;
+    return { ...userWithoutPassword };
   }
 
-  private async generateToken(user: UserRecord): Promise<string> {
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      throw new Error("Erro de configuração: JWT_SECRET não definido.");
-    }
-
-    const secret = new TextEncoder().encode(jwtSecret);
-    return new SignJWT({ email: user.email })
-      .setProtectedHeader({ alg: "HS256" })
-      .setSubject(user.id) // Aqui o ID do banco é inserido no claim 'sub'
-      .setIssuedAt()
-      .setExpirationTime("24h")
-      .sign(secret);
+  // Método auxiliar para buscar usuário (pode ser útil para o middleware)
+  async getUserById(id: string): Promise<Omit<UserRecord, 'password'> | null> {
+      const user = await this.userRepository.findById(id);
+      if (!user) {
+          return null;
+      }
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
   }
 }
+
+// Exportar uma instância configurada para ser usada
+// Você precisará ter uma implementação concreta do IUserRepository (ex: PrismaUserRepository)
+// Exemplo: export const authService = new AuthService(new PrismaUserRepository(prisma));
+// Por enquanto, vamos deixar comentado até que o repositório concreto seja definido.
+
+// Para este exemplo, vamos supor que você tenha uma instância de repositório concreta
+// import { PrismaUserRepository } from './PrismaUserRepository'; // Exemplo
+// export const authService = new AuthService(new PrismaUserRepository(prisma));
+
+// Se o PrismaUserRepository não existir, você pode criar uma instância com os métodos necessários
+// ou usar um mock para testes
+
+// Nota: A geração de JWT foi removida pois será tratada pelo NextAuth.js.

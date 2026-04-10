@@ -1,21 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Sora:wght@600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Cores fundamentais baseadas no Stitch "Linear Financial" */
+  --background: #131315;
+  --foreground: #e5e1e4;
+  
+  --primary: #2563EB;
+  --secondary: #8B5CF6;
+  --tertiary: #10B981;
+  
+  /* Mantendo consistência com o que já existe nos tokens */
+  --surface-container: #201f22;
+  --surface-container-low: #1c1b1d;
+  --outline-variant: #434655;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Typography Classes */
+.font-display {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+}
+
+.font-headline {
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
 }
