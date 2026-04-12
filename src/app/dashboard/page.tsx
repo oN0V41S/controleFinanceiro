@@ -1,29 +1,20 @@
 // src/app/dashboard/page.tsx
-'use client'; // Obrigatório, pois usa hooks
+'use client';
 
 import React from 'react';
+import { DashboardLayout } from '@/features/dashboard/components/DashboardLayout';
 import useFinanceData from '@/shared/hooks/useFinanceData';
-
-// Importando os novos componentes de UI
-import FinanceHeader from '@/components/FinanceHeader';
 import FilterControls from '@/features/transactions/components/FilterControls';
 import DashboardView from '@/components/DashboardView';
 import TransactionsTable from '@/features/transactions/components/TransactionsTable';
 import TransactionModal from '@/features/transactions/components/TransactionModal';
 import ConfirmationModal from '@/features/transactions/components/ConfirmationModal';
 
-// O componente de página agora é um 'Contêiner'
-const FinancialManagerPage: React.FC = () => {
-    
-    // O hook 'useFinanceData' fornece todo o estado e lógica
+export default function DashboardPage() {
     const financeData = useFinanceData();
 
     return (
-        <div className="min-h-screen bg-surface font-sans">
-            
-            {/* 1. Componente de Cabeçalho */}
-            <FinanceHeader openModal={financeData.openModal} />
-
+        <DashboardLayout>
             <main className="max-w-6xl mx-auto p-4">
                 <div className="bg-surface-container rounded-md mb-6">
                     <div className="flex border-b border-outline-variant">
@@ -41,21 +32,21 @@ const FinancialManagerPage: React.FC = () => {
                         ))}
                     </div>
                     
-                    {/* 2. Componente de Filtros */}
+                    {/* Componente de Filtros */}
                     <FilterControls {...financeData} />
                 </div>
 
                 {/* --- CONTENT AREA --- */}
                 {financeData.activeTab === 'dashboard' ? (
-                    // 3. Componente da Visão de Dashboard
+                    // Componente da Visão de Dashboard
                     <DashboardView {...financeData} />
                 ) : (
-                    // 4. Componente da Tabela de Transações
+                    // Componente da Tabela de Transações
                     <TransactionsTable {...financeData} />
                 )}
             </main>
 
-            {/* 5. Componente do Modal de Transação (Formulário) */}
+            {/* Modal de Transação (Formulário) */}
             <TransactionModal 
                 isOpen={financeData.showTransactionModal}
                 onClose={financeData.closeModal}
@@ -66,7 +57,7 @@ const FinancialManagerPage: React.FC = () => {
                 categories={financeData.categories}
             />
 
-            {/* 6. Componente do Modal de Confirmação (Excluir) */}
+            {/* Modal de Confirmação (Excluir) */}
             <ConfirmationModal
                 isOpen={financeData.transactionToDelete !== null}
                 onClose={() => financeData.setTransactionToDelete(null)}
@@ -74,10 +65,6 @@ const FinancialManagerPage: React.FC = () => {
                 title="Confirmar Exclusão"
                 message="Você tem certeza que deseja excluir esta transação? Esta ação não pode ser desfeita."
             />
-
-            {/* O CSS de animação deve ir para 'src/app/globals.css' */}
-        </div>
+        </DashboardLayout>
     );
-};
-
-export default FinancialManagerPage;
+}
