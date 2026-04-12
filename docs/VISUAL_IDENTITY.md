@@ -19,6 +19,7 @@ A interface utiliza uma paleta Dark Mode otimizada para legibilidade de dados fi
 | **Secundária** | `#8B5CF6` (Insight Violet) |
 | **Fundo (Canvas)** | `#131315` (Deep Ink) |
 | **Sucesso** | `#10B981` (Success Mint) |
+| **Muted** | `#787679` (Neutral Gray) |
 
 ## 3. Tipografia
 *   **Headings/Body:** `Inter`.
