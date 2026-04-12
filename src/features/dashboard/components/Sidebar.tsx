@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Wallet, LayoutDashboard, ArrowLeftRight, Settings } from 'lucide-react';
+import { Wallet, LayoutDashboard, ArrowLeftRight, Settings, PanelLeftClose, PanelLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigationItems = [
@@ -26,6 +27,7 @@ const footerItem = {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {
@@ -35,19 +37,57 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex w-72 h-screen bg-surface-container flex-col flex-shrink-0">
+    <aside 
+      className={cn(
+        'hidden md:flex h-screen bg-surface-container flex-col flex-shrink-0 transition-all duration-300',
+        collapsed ? 'w-16' : 'w-72'
+      )}
+    >
       {/* Header */}
-      <div className="p-4 flex items-center gap-3">
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-          <Wallet className="w-5 h-5 text-primary" />
-        </div>
-        <span className="font-display font-semibold text-xl text-on-surface text-primary">
-          FinanceGuy
-        </span>
+      <div className={cn(
+        'p-4 flex items-center gap-3',
+        collapsed && 'justify-center'
+      )}>
+        {!collapsed && (
+          <>
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+              <Wallet className="w-5 h-5 text-primary" />
+            </div>
+            <span className="font-display font-semibold text-xl text-on-surface text-primary">
+              FinanceGuy
+            </span>
+          </>
+        )}
+        {collapsed && (
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+            <Wallet className="w-5 h-5 text-primary" />
+          </div>
+        )}
       </div>
 
+      {/* Collapse Button */}
+      <button
+        type="button"
+        onClick={() => setCollapsed(!collapsed)}
+        className={cn(
+          'mx-2 mb-2 p-2 rounded-md',
+          'text-neutral hover:bg-surface-container-low',
+          'transition-colors flex items-center justify-center'
+        )}
+        aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
+      >
+        {collapsed ? (
+          <ChevronRight className="w-5 h-5" />
+        ) : (
+          <ChevronLeft className="w-5 h-5" />
+        )}
+      </button>
+
       {/* Navigation */}
-      <nav className="flex-1 p-4 flex flex-col gap-1">
+      <nav className={cn(
+        'flex-1 p-4 flex flex-col gap-1',
+        collapsed && 'px-2'
+      )}>
         {navigationItems.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
@@ -56,40 +96,59 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              data-testid={`icon-${item.icon.name}`}
               className={cn(
                 'group flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors',
+                collapsed && 'justify-center px-0',
                 active
                   ? 'text-primary bg-surface-container-low'
                   : 'text-on-surface text-neutral hover:bg-surface-container-low'
               )}
             >
               <Icon
+                data-testid={`icon-${item.icon.name}`}
                 className={cn(
-                  'w-5 h-5 transition-colors',
+                  'w-5 h-5 transition-colors flex-shrink-0',
                   active ? 'text-primary' : 'text-on-surface-variant group-hover:text-on-surface'
                 )}
               />
-              <span className="text-sm font-medium">{item.label}</span>
+              {!collapsed && (
+                <span className="text-sm font-medium">{item.label}</span>
+              )}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="p-4 pt-0">
+      <div className={cn(
+        'p-4 pt-0',
+        collapsed && 'px-2'
+      )}>
         <Link
           href={footerItem.href}
           className={cn(
             'group flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors',
+            collapsed && 'justify-center px-0',
             isActive(footerItem.href)
               ? 'text-primary bg-surface-container-low'
               : 'text-on-surface hover:bg-surface-container-low'
           )}
         >
           <Settings
-           className='text-neutral'
+            className={cn(
+              'w-5 h-5 transition-colors flex-shrink-0',
+              isActive(footerItem.href) ? 'text-primary' : 'text-neutral'
+            )}
           />
-          <span className="text-sm text-neutral font-medium">{footerItem.label}</span>
+          {!collapsed && (
+            <span className={cn(
+              'text-sm font-medium',
+              isActive(footerItem.href) ? 'text-primary' : 'text-neutral'
+            )}>
+              {footerItem.label}
+            </span>
+          )}
         </Link>
       </div>
     </aside>
