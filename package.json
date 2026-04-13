@@ -2,6 +2,14 @@
   "name": "controle-financeiro",
   "version": "0.1.0",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "sharp"
+    ]
+  },
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
