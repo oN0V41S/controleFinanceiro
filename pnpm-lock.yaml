@@ -1901,6 +1901,7 @@ packages:
 
   /@swagger-api/apidom-ns-json-schema-draft-4@1.10.1:
     resolution: {integrity: sha512-jynGmvUNNuqy7AJb5n8mXjWgmo8mPDNuIYMgije3U4eThdmOpd4iD4iO0EVV5ltfYDlUWepQaiSn2NPn4TSzVQ==}
+    requiresBuild: true
     dependencies:
       '@babel/runtime-corejs3': 7.29.2
       '@swagger-api/apidom-ast': 1.10.1
