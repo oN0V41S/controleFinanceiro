@@ -212,3 +212,88 @@ experimental: {
   },
 },
 ```
+
+## 🤖 Invocação Automática de Sub-Agents
+
+O OpenCode DEVE invocar automaticamente os sub-agents listados abaixo SEMPRE que as condições forem atendidas. O usuário NÃO precisa pedir explicitamente.
+
+### Invocação Automática Obrigatória
+
+| Sub-Agent | Quando Invocar Automaticamente |
+|-----------|--------------------------------|
+| **frontend** | • Criar/modificar componentes React<br>• Desenvolver UI para features<br>• Implementar formulários (login, registro, transações)<br>• Criar tabelas com filtros/ordenação<br>• Desenvolver modais e dialogs |
+| **quality-assurance-analyst** | • Antes de qualquer commit<br>• Ao criar novas funções/services<br>• Ao modificar fluxos existentes<br>• Precisar de testes unitários, integração ou E2E<br>• Precisar de coverage report |
+| **security-secret-auditor** | • Ao criar novos arquivos de configuração<br>• Ao integrar APIs externas<br>• Ao lidar com dados sensíveis (transações, auth)<br>• Ao adicionar dependências externas<br>• Ao fazer deploy |
+| **project-review** | • Ao completar uma feature completa<br>• Antes de PRs/commits importantes<br>• Ao refatorar código existente<br>• Ao adicionar nova dependência<br>• Para validar Clean Architecture |
+| **docs-architect** | • Ao criar novas APIs/routes<br>• Ao adicionar nova feature<br>• Ao modificar arquitetura<br>• Precisar gerar documentação técnica<br>• Criar ADRs |
+| **builder** | • Ao executar `pnpm run build`<br>• Ao preparar deploy<br>• Ao verificar build errors<br>• Ao otimizar bundle |
+| **opencode-skill-architect** | • Ao criar nova skill<br>• Ao auditar skills existentes<br>• Ao definir novos workflows |
+
+### Fluxos de Automação Recomendados
+
+#### 1. Nova Feature
+```
+1. quality-assurance-analyst → Escrever testes
+2. frontend → Desenvolver UI
+3. project-review → Validar arquitetura
+4. docs-architect → Documentar
+5. security-secret-auditor → Auditar código
+```
+
+#### 2. Modificação de Backend
+```
+1. quality-assurance-analyst → Testes unitários
+2. project-review → Clean Architecture check
+3. security-secret-auditor → Verify no hardcoded secrets
+```
+
+#### 3. Modificação de Frontend
+```
+1. frontend → Implementar componente
+2. quality-assurance-analyst → Testes de componente
+3. builder → Verificar build
+```
+
+#### 4. Deploy/Build
+```
+1. builder → Executar build
+2. security-secret-auditor → Auditar dependências
+3. project-review → Validar última verificação
+```
+
+### Invocação via Task Tool
+
+```typescript
+// Exemplos de como o OpenCode deve chamar automaticamente:
+
+// Ao criar UI:
+task(subagent_type="frontend", prompt="Crie o componente de TransactionTable...")
+
+// Ao criar testes:
+task(subagent_type="quality-assurance-analyst", prompt="Escreva testes para TransactionService...")
+
+// Ao auditar segurança:
+task(subagent_type="security-secret-auditor", prompt="Verifique patterns de injeção no código...")
+
+// Ao fazer review:
+task(subagent_type="project-review", prompt="Valide conformidade com Clean Architecture...")
+
+// Ao documentar:
+task(subagent_type="docs-architect", prompt="Gere documentação para a API de transações...")
+
+// Ao fazer build:
+task(subagent_type="builder", prompt="Execute pnpm run build e verifique erros...")
+
+// Ao gerenciar skills:
+task(subagent_type="opencode-skill-architect", prompt="Crie uma nova skill para..."
+```
+
+### Checklist de Automação
+
+Antes de finalizar qualquer tarefa, o OpenCode DEVE verificar:
+- [ ] Todos os testes passaram? → quality-assurance-analyst
+- [ ] UI segue VISUAL_IDENTITY.md? → frontend
+- [ ] Código seguro (sem secrets)? → security-secret-auditor
+- [ ] Arquitetura válida? → project-review
+- [ ] Documentação atualizada? → docs-architect
+- [ ] Build funciona? → builder
