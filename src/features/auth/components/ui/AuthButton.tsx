@@ -18,7 +18,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary/50",
   secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-secondary/50",
   outline: "border-2 border-primary bg-transparent text-primary hover:bg-primary/10 focus:ring-2 focus:ring-primary/50",
-  ghost: "bg-transparent text-foreground hover:bg-muted focus:ring-2 focus:ring-muted/50",
+  ghost: "bg-transparent text-foreground hover:bg-neutral focus:ring-2 focus:ring-neutral/50",
   danger: "bg-destructive text-white hover:bg-destructive/90 focus:ring-2 focus:ring-destructive/50",
 };
 

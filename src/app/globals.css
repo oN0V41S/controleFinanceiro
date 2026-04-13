@@ -40,3 +40,13 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
 }
+
+/* Drawer Animation */
+@keyframes slide-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0%); }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out forwards;
+}

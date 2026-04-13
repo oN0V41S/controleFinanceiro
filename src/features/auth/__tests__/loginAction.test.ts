@@ -16,6 +16,11 @@ jest.mock("next-auth", () => ({
   },
 }));
 
+// Mock do next/navigation redirect
+jest.mock("next/navigation", () => ({
+  redirect: jest.fn(() => Promise.resolve()),
+}));
+
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 
@@ -95,11 +100,11 @@ describe("loginAction", () => {
       // signIn no NextAuth redireciona, então precisa ser tratado
       await loginAction(validData);
 
-      // Assert
+      // Assert - O implementation usa redirect: false + redirect("/dashboard")
       expect(signIn).toHaveBeenCalledWith("credentials", {
         email: "test@test.com",
         password: "Password123!",
-        redirectTo: "/dashboard",
+        redirect: false,
       });
     });
 
@@ -113,11 +118,11 @@ describe("loginAction", () => {
       // Act
       await loginAction(userData);
 
-      // Assert
+      // Assert - O implementation usa redirect: false + redirect("/dashboard")
       expect(signIn).toHaveBeenCalledWith("credentials", {
         email: "user@example.com",
         password: "MyPassword123!",
-        redirectTo: "/dashboard",
+        redirect: false,
       });
     });
   });
