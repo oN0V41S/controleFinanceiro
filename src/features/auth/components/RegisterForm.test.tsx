@@ -124,8 +124,18 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      // Fill valid data to enable submit button (password must be valid)
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
-      fireEvent.click(submitButton);
+
+      fireEvent.change(nameInput, { target: { value: "" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+      fireEvent.change(passwordInput, { target: { value: "Password123!" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Nome deve ter pelo menos 2 caracteres")).toBeInTheDocument();
@@ -138,10 +148,16 @@ describe("RegisterForm", () => {
       render(<RegisterForm />);
 
       const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
       fireEvent.change(nameInput, { target: { value: "A" } });
-      fireEvent.click(submitButton);
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+      fireEvent.change(passwordInput, { target: { value: "Password123!" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Nome deve ter pelo menos 2 caracteres")).toBeInTheDocument();
@@ -155,8 +171,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
-      fireEvent.click(submitButton);
+
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+      fireEvent.change(passwordInput, { target: { value: "Password123!" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("O apelido é obrigatório")).toBeInTheDocument();
@@ -168,11 +193,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
       const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
       fireEvent.change(nicknameInput, { target: { value: "B" } });
-      fireEvent.click(submitButton);
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+      fireEvent.change(passwordInput, { target: { value: "Password123!" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("O apelido é obrigatório")).toBeInTheDocument();
@@ -186,8 +217,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
-      fireEvent.click(submitButton);
+
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "" } });
+      fireEvent.change(passwordInput, { target: { value: "Password123!" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Email inválido")).toBeInTheDocument();
@@ -199,19 +239,20 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
       const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
-      // Enter invalid email format and submit
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
       fireEvent.change(emailInput, { target: { value: "invalid-email" } });
+      fireEvent.change(passwordInput, { target: { value: "Password123!" } });
       
-      // Submit the form
-      fireEvent.click(submitButton);
+      fireEvent.submit(submitButton);
 
-      // Wait for the form submission attempt to complete
       await waitFor(() => {
-        // The browser's native email validation (type="email") may intercept the submit
-        // So we check that registerAction was NOT called with invalid data
         expect(mockRegisterAction).not.toHaveBeenCalled();
       }, { timeout: 1000 });
     });
@@ -223,8 +264,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
-      fireEvent.click(submitButton);
+
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+      fireEvent.change(passwordInput, { target: { value: "" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Senha deve ter pelo menos 8 caracteres")).toBeInTheDocument();
@@ -236,11 +286,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "Pass1!" } });
-      fireEvent.click(submitButton);
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Senha deve ter pelo menos 8 caracteres")).toBeInTheDocument();
@@ -252,11 +308,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "password1!" } });
-      fireEvent.click(submitButton);
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Senha deve conter maiúsculas, minúsculas, números e símbolos")).toBeInTheDocument();
@@ -268,11 +330,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "PASSWORD1!" } });
-      fireEvent.click(submitButton);
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Senha deve conter maiúsculas, minúsculas, números e símbolos")).toBeInTheDocument();
@@ -284,11 +352,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "Password!" } });
-      fireEvent.click(submitButton);
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Senha deve conter maiúsculas, minúsculas, números e símbolos")).toBeInTheDocument();
@@ -300,11 +374,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
 
+      fireEvent.change(nameInput, { target: { value: "John Doe" } });
+      fireEvent.change(nicknameInput, { target: { value: "johnd" } });
+      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "Password123" } });
-      fireEvent.click(submitButton);
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Senha deve conter maiúsculas, minúsculas, números e símbolos")).toBeInTheDocument();
@@ -318,8 +398,17 @@ describe("RegisterForm", () => {
 
       render(<RegisterForm />);
 
+      const nameInput = screen.getByTestId("name");
+      const nicknameInput = screen.getByTestId("nickname");
+      const emailInput = screen.getByTestId("email");
+      const passwordInput = screen.getByTestId("password");
       const submitButton = screen.getByTestId("submit-button");
-      fireEvent.click(submitButton);
+
+      fireEvent.change(nameInput, { target: { value: "" } });
+      fireEvent.change(nicknameInput, { target: { value: "" } });
+      fireEvent.change(emailInput, { target: { value: "" } });
+      fireEvent.change(passwordInput, { target: { value: "" } });
+      fireEvent.submit(submitButton);
 
       await waitFor(() => {
         expect(screen.getByText("Nome deve ter pelo menos 2 caracteres")).toBeInTheDocument();
