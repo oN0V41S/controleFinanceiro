@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema, RegisterInput } from "@/features/auth/schemas/auth.schema";
 import { registerAction } from "@/features/auth/actions/registerAction";
@@ -22,16 +22,16 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
     mode: "onChange",
   });
 
-  const watchPassword = watch("password") || "";
-  const watchEmail = watch("email") || "";
-  const watchConfirm = watch("confirmPassword") || "";
+  const watchPassword = useWatch({ control, name: "password" }) ?? "";
+  const watchEmail = useWatch({ control, name: "email" }) ?? "";
+  const watchConfirm = useWatch({ control, name: "confirmPassword" }) ?? "";
   const isPasswordValid = validatePasswordRequirements(watchPassword);
 
   const emailStatus: FieldStatus = errors.email

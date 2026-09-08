@@ -294,6 +294,10 @@ export class TransactionService {
     return data;
   }
 
+  async getAvailableYears(userId: string): Promise<number[]> {
+    return this.transactionRepository.getAvailableYears(userId);
+  }
+
   async updateFutureTransactions(id: string, userId: string, data: unknown): Promise<number> {
     // Validação ANTES de qualquer lookup — lança ZodError sem consultar a transação.
     const validatedData = UpdateTransactionSchema.parse(data);

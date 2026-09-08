@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Search } from 'lucide-react';
-import { getYearOptions } from '@/shared/utils';
+import { useTransactionYears } from '@/shared/hooks/useTransactionYears';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -82,6 +82,7 @@ interface FilterControlsProps {
   onSearchChange: (value: string) => void;
   categoryFilter: string;
   onCategoryFilterChange: (value: string) => void;
+  yearsRefreshTrigger?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -103,8 +104,9 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   onSearchChange,
   categoryFilter,
   onCategoryFilterChange,
+  yearsRefreshTrigger = 0,
 }) => {
-  const yearOptions = getYearOptions();
+  const yearOptions = useTransactionYears(yearsRefreshTrigger);
 
   return (
     <div className="space-y-3 p-4 bg-surface-container-low rounded-xl">
@@ -142,7 +144,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
                 {() => `${MONTHS.find((m) => m.value === selectedMonth)?.label ?? ''} ${selectedYear}`}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-surface-container max-h-60 overflow-y-auto">
+            <SelectContent className="bg-surface-container max-h-60 overflow-y-auto" alignItemWithTrigger={false}>
               {yearOptions.flatMap((year) =>
                 MONTHS.map((m) => (
                   <SelectItem key={`${year}-${m.value}`} value={`${year}-${m.value}`}>

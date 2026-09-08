@@ -50,10 +50,8 @@ jest.mock('lucide-react', () => ({
 // Mocks — Utilitários
 // ---------------------------------------------------------------------------
 
-const mockGetYearOptions = jest.fn();
-
-jest.mock('@/shared/utils', () => ({
-  getYearOptions: () => mockGetYearOptions(),
+jest.mock('@/shared/hooks/useTransactionYears', () => ({
+  useTransactionYears: () => [2024, 2025, 2026],
 }));
 
 jest.mock('@/lib/utils', () => ({
@@ -104,7 +102,7 @@ import FilterControls from '../FilterControls';
 describe('FilterControls — Estrutura', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetYearOptions.mockReturnValue([2025, 2026, 2027]);
+    
   });
 
   it('deve renderizar o componente sem erros', () => {
@@ -174,7 +172,7 @@ describe('FilterControls — Estrutura', () => {
 describe('FilterControls — Ordem dos selects', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetYearOptions.mockReturnValue([2025, 2026, 2027]);
+    
   });
 
   it('deve renderizar os selects na ordem: período, categoria, status', () => {
@@ -223,7 +221,7 @@ describe('FilterControls — Ordem dos selects', () => {
 describe('FilterControls — Interações', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetYearOptions.mockReturnValue([2025, 2026, 2027]);
+    
   });
 
   it('deve chamar onSearchChange ao digitar no campo de busca', () => {
@@ -289,7 +287,7 @@ describe('FilterControls — Interações', () => {
 describe('FilterControls — Estado visual', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetYearOptions.mockReturnValue([2025, 2026, 2027]);
+    
   });
 
   it('tab "Todos" deve ter classe de ativo quando typeFilter é "all"', () => {

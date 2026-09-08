@@ -250,4 +250,13 @@ export class PostgresTransactionRepository implements ITransactionRepository {
       };
     });
   }
+
+  async getAvailableYears(userId: string): Promise<number[]> {
+    const rows = await prisma.transaction.findMany({
+      where: { userId },
+      select: { date: true },
+    });
+    const yearSet = new Set(rows.map((r) => r.date.getFullYear()));
+    return [...yearSet].sort((a, b) => b - a);
+  }
 }

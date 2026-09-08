@@ -16,4 +16,5 @@ export interface ITransactionRepository {
   // Analytics
   getSummary(filters?: Record<string, any>): Promise<FinancialSummary>;
   getMonthlySummary(userId: string, period: string): Promise<MonthlyPoint[]>;
+  getAvailableYears(userId: string): Promise<number[]>;
 }

@@ -48,6 +48,7 @@ export default function TransactionsPage() {
     categoryFilter,
     setCategoryFilter,
     refresh,
+    mutationKey,
     createTransaction,
     updateTransaction,
     updateFutureTransactions,
@@ -309,6 +310,7 @@ export default function TransactionsPage() {
                 onSearchChange={setSearchFilter}
                 categoryFilter={categoryFilter}
                 onCategoryFilterChange={setCategoryFilter}
+                yearsRefreshTrigger={mutationKey}
               />
             </div>
 

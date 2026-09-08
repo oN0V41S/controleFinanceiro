@@ -3,7 +3,7 @@
 import { PieChart as PieChartIcon } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ChartWrapper, ChartTooltipStyle } from './ChartWrapper';
+import { ChartWrapper, ChartTooltipStyle, ChartLabelStyle, ChartItemStyle } from './ChartWrapper';
 import type { Transaction } from '@/features/transactions/validations';
 
 interface CategoryBreakdownProps {
@@ -75,7 +75,7 @@ export function CategoryBreakdown({ transactions }: CategoryBreakdownProps) {
           </div>
         ) : (
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-[220px]">
               <ChartWrapper height={220}>
                 <PieChart>
                   <Pie
@@ -93,6 +93,8 @@ export function CategoryBreakdown({ transactions }: CategoryBreakdownProps) {
                   </Pie>
                   <Tooltip
                     contentStyle={ChartTooltipStyle}
+                    labelStyle={ChartLabelStyle}
+                    itemStyle={ChartItemStyle}
                     formatter={(value: number) =>
                       new Intl.NumberFormat('pt-BR', {
                         style: 'currency',

@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, LoginInput } from "@/features/auth/schemas/auth.schema";
 import { loginAction } from "@/features/auth/actions/loginAction";
@@ -17,16 +17,16 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({
     resolver: zodResolver(LoginSchema),
     mode: "onChange",
   });
 
-  const watchEmail = watch("email") || "";
+  const watchEmail = useWatch({ control, name: "email" }) ?? "";
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(watchEmail);
-  const watchPassword = watch("password") || "";
+  const watchPassword = useWatch({ control, name: "password" }) ?? "";
   const isLoginValid = isEmailValid && watchPassword.length >= 1;
   const emailStatus: FieldStatus = errors.email
     ? "invalid"
