@@ -69,7 +69,7 @@ function SkeletonRow() {
 function CardTransaction({ transactions, isLoading, onEdit, onDelete }: CardTransactionProps) {
   if (isLoading) {
     return (
-      <div className="rounded-xl bg-muted/20 overflow-hidden">
+      <div className="rounded-xl bg-surface-container-low overflow-hidden">
         {Array.from({ length: 5 }).map((_, i) => (
           <React.Fragment key={i}>
             {i > 0 && <div className="h-px bg-border mx-4" />}
@@ -84,7 +84,7 @@ function CardTransaction({ transactions, isLoading, onEdit, onDelete }: CardTran
     return (
       <div
         data-testid="empty-state"
-        className="rounded-xl bg-muted/20 px-6 py-16 text-center text-on-surface-variant"
+        className="rounded-xl bg-surface-container-low px-6 py-16 text-center text-on-surface-variant"
       >
         Nenhuma transação encontrada para o período selecionado.
       </div>
@@ -94,13 +94,13 @@ function CardTransaction({ transactions, isLoading, onEdit, onDelete }: CardTran
   const groups = groupByDate(transactions);
 
   return (
-    <div data-testid="transactions-list" className="rounded-xl bg-muted/20 overflow-hidden">
+    <div data-testid="transactions-list" className="rounded-xl bg-surface-container-low overflow-hidden">
       {groups.map(([date, txs], groupIdx) => {
         const dailyTotal = calcDailyTotal(txs);
         return (
           <div key={date} data-testid="date-group">
             {/* Date header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-muted/60">
+            <div className="flex items-center justify-between px-4 py-2 bg-surface-container-high">
               <span
                 data-testid="date-header"
                 className="text-xs font-semibold text-on-surface tracking-widest"
@@ -124,7 +124,7 @@ function CardTransaction({ transactions, isLoading, onEdit, onDelete }: CardTran
                 {txIdx > 0 && <div className="h-px bg-border mx-4" />}
                 <div
                   data-testid="transaction-card"
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-muted/20 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-surface-container transition-colors"
                 >
                   {/* Type icon */}
                   <div

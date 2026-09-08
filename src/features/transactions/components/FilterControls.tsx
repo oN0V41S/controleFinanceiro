@@ -107,7 +107,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   const yearOptions = getYearOptions();
 
   return (
-    <div className="space-y-3 p-4 bg-muted/30 rounded-xl">
+    <div className="space-y-3 p-4 bg-surface-container-low rounded-xl">
       {/* Row 1: search + month/year + category + status */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Search */}
