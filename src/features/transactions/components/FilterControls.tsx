@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Search } from 'lucide-react';
-import { getYearOptions } from '@/shared/utils';
+import { useTransactionYears } from '@/shared/hooks/useTransactionYears';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -104,7 +104,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   categoryFilter,
   onCategoryFilterChange,
 }) => {
-  const yearOptions = getYearOptions();
+  const yearOptions = useTransactionYears();
 
   return (
     <div className="space-y-3 p-4 bg-surface-container-low rounded-xl">

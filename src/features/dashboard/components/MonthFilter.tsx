@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { CalendarDays } from 'lucide-react';
+import { useTransactionYears } from '@/shared/hooks/useTransactionYears';
 
 const MONTHS = [
   { value: '01', label: 'Janeiro', short: 'Jan' },
@@ -25,10 +26,6 @@ const MONTHS = [
   { value: '12', label: 'Dezembro', short: 'Dez' },
 ];
 
-function getAvailableYears(): number[] {
-  const currentYear = new Date().getFullYear();
-  return [currentYear - 1, currentYear, currentYear + 1];
-}
 
 interface MonthFilterProps {
   value: string;
@@ -46,7 +43,7 @@ export function MonthFilter({
   className,
 }: MonthFilterProps) {
   const selectedMonth = MONTHS.find((m) => m.value === value);
-  const years = getAvailableYears();
+  const years = useTransactionYears();
 
   return (
     <div className={cn('flex items-center gap-2', className)}>

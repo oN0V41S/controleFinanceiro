@@ -250,4 +250,14 @@ export class PostgresTransactionRepository implements ITransactionRepository {
       };
     });
   }
+
+  async getAvailableYears(userId: string): Promise<number[]> {
+    const rows = await prisma.$queryRaw<{ year: number }[]>`
+      SELECT DISTINCT EXTRACT(YEAR FROM date)::int AS year
+      FROM "Transaction"
+      WHERE "userId" = ${userId}
+      ORDER BY year DESC
+    `;
+    return rows.map((r) => r.year);
+  }
 }
