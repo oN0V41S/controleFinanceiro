@@ -82,6 +82,7 @@ interface FilterControlsProps {
   onSearchChange: (value: string) => void;
   categoryFilter: string;
   onCategoryFilterChange: (value: string) => void;
+  yearsRefreshTrigger?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -103,8 +104,9 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   onSearchChange,
   categoryFilter,
   onCategoryFilterChange,
+  yearsRefreshTrigger = 0,
 }) => {
-  const yearOptions = useTransactionYears();
+  const yearOptions = useTransactionYears(yearsRefreshTrigger);
 
   return (
     <div className="space-y-3 p-4 bg-surface-container-low rounded-xl">

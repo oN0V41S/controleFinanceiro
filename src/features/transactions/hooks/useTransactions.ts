@@ -66,6 +66,8 @@ export interface UseTransactionsReturn {
   categoryFilter: string;
   setCategoryFilter: (value: string) => void;
   refresh: () => void;
+  /** Incrementa a cada mutation — usar como refreshTrigger no useTransactionYears */
+  mutationKey: number;
   createTransaction: (data: TransactionFormData) => Promise<void>;
   updateTransaction: (id: string, data: Partial<TransactionFormData>) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
@@ -521,6 +523,7 @@ export default function useTransactions(): UseTransactionsReturn {
     categoryFilter,
     setCategoryFilter,
     refresh,
+    mutationKey: refreshKey,
     createTransaction,
     updateTransaction,
     deleteTransaction,

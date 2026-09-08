@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export function useTransactionYears(): number[] {
+export function useTransactionYears(refreshTrigger = 0): number[] {
   const currentYear = new Date().getFullYear();
   const [years, setYears] = useState<number[]>([currentYear]);
 
@@ -13,7 +13,7 @@ export function useTransactionYears(): number[] {
         if (json?.data && json.data.length > 0) setYears(json.data);
       })
       .catch(() => {});
-  }, []);
+  }, [refreshTrigger]);
 
   return years;
 }

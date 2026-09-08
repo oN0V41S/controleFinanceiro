@@ -252,12 +252,11 @@ export class PostgresTransactionRepository implements ITransactionRepository {
   }
 
   async getAvailableYears(userId: string): Promise<number[]> {
-    const rows = await prisma.$queryRaw<{ year: number }[]>`
-      SELECT DISTINCT EXTRACT(YEAR FROM date)::int AS year
-      FROM "Transaction"
-      WHERE "userId" = ${userId}
-      ORDER BY year DESC
-    `;
-    return rows.map((r) => r.year);
+    const rows = await prisma.transaction.findMany({
+      where: { userId },
+      select: { date: true },
+    });
+    const yearSet = new Set(rows.map((r) => r.date.getFullYear()));
+    return [...yearSet].sort((a, b) => b - a);
   }
 }
