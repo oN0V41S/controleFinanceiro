@@ -107,7 +107,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   const yearOptions = getYearOptions();
 
   return (
-    <div className="space-y-3 p-4 bg-muted/30 rounded-xl border border-border">
+    <div className="space-y-3 p-4 bg-muted/30 rounded-xl">
       {/* Row 1: search + month/year + category + status */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Search */}
@@ -123,48 +123,33 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           />
         </div>
 
-        {/* Month */}
-        <div data-testid="select-month">
+        {/* Period (month + year unified) */}
+        <div data-testid="select-period">
           <Select
-            value={selectedMonth}
-            onValueChange={(value) => { if (value !== null) onMonthChange(value); }}
+            value={`${selectedYear}-${selectedMonth}`}
+            onValueChange={(value) => {
+              if (!value) return;
+              const [y, m] = value.split('-');
+              onYearChange(y);
+              onMonthChange(m);
+            }}
           >
             <SelectTrigger
-              className="w-[130px] h-9 text-sm"
-              aria-label="Selecionar mês"
+              className="w-[170px] h-9 text-sm"
+              aria-label="Selecionar período"
             >
-              <SelectValue placeholder="Mês">
-                {(v: string) => MONTHS.find((m) => m.value === v)?.label ?? 'Mês'}
+              <SelectValue placeholder="Período">
+                {() => `${MONTHS.find((m) => m.value === selectedMonth)?.label ?? ''} ${selectedYear}`}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-surface-container">
-              {MONTHS.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Year */}
-        <div data-testid="select-year">
-          <Select
-            value={selectedYear}
-            onValueChange={(value) => { if (value !== null) onYearChange(value); }}
-          >
-            <SelectTrigger
-              className="w-[90px] h-9 text-sm"
-              aria-label="Selecionar ano"
-            >
-              <SelectValue placeholder="Ano" />
-            </SelectTrigger>
-            <SelectContent className="bg-surface-container">
-              {yearOptions.map((year) => (
-                <SelectItem key={year} value={String(year)}>
-                  {year}
-                </SelectItem>
-              ))}
+            <SelectContent className="bg-surface-container max-h-60 overflow-y-auto">
+              {yearOptions.flatMap((year) =>
+                MONTHS.map((m) => (
+                  <SelectItem key={`${year}-${m.value}`} value={`${year}-${m.value}`}>
+                    {m.label} {year}
+                  </SelectItem>
+                )),
+              )}
             </SelectContent>
           </Select>
         </div>
@@ -231,7 +216,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               className={cn(
                 'rounded-md px-3 py-1 text-sm font-medium transition-colors',
                 typeFilter === opt.value
-                  ? 'bg-background text-on-surface shadow-sm'
+                  ? 'bg-primary text-on-primary shadow-sm'
                   : 'text-muted-foreground hover:text-on-surface',
               )}
             >
@@ -241,22 +226,25 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         </div>
 
         {/* Quinzenal tabs */}
-        <div data-testid="select-quinzenal" className="flex items-center gap-1 rounded-lg bg-muted p-1">
-          {QUINZENAL_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              data-testid={`quinzenal-tab-${opt.value}`}
-              onClick={() => onQuinzenalFilterChange(opt.value)}
-              className={cn(
-                'rounded-md px-3 py-1 text-sm font-medium transition-colors',
-                quinzenalFilter === opt.value
-                  ? 'bg-background text-on-surface shadow-sm'
-                  : 'text-muted-foreground hover:text-on-surface',
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">Quinzena:</span>
+          <div data-testid="select-quinzenal" className="flex items-center gap-1 rounded-lg bg-muted p-1">
+            {QUINZENAL_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                data-testid={`quinzenal-tab-${opt.value}`}
+                onClick={() => onQuinzenalFilterChange(opt.value)}
+                className={cn(
+                  'rounded-md px-3 py-1 text-sm font-medium transition-colors',
+                  quinzenalFilter === opt.value
+                    ? 'bg-primary text-on-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-on-surface',
+                )}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

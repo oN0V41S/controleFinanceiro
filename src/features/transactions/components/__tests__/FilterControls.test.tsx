@@ -158,11 +158,10 @@ describe('FilterControls — Estrutura', () => {
     expect(screen.getByTestId('quinzenal-tab-second')).toHaveTextContent('16–31');
   });
 
-  it('deve renderizar selects de mês, ano, categoria e status', () => {
+  it('deve renderizar selects de período, categoria e status', () => {
     renderComponent();
 
-    expect(screen.getByTestId('select-month')).toBeInTheDocument();
-    expect(screen.getByTestId('select-year')).toBeInTheDocument();
+    expect(screen.getByTestId('select-period')).toBeInTheDocument();
     expect(screen.getByTestId('select-category')).toBeInTheDocument();
     expect(screen.getByTestId('select-paid')).toBeInTheDocument();
   });
@@ -178,20 +177,15 @@ describe('FilterControls — Ordem dos selects', () => {
     mockGetYearOptions.mockReturnValue([2025, 2026, 2027]);
   });
 
-  it('deve renderizar os selects na ordem: mês, ano, categoria, status', () => {
+  it('deve renderizar os selects na ordem: período, categoria, status', () => {
     renderComponent();
 
-    const monthSelect = screen.getByTestId('select-month');
-    const yearSelect = screen.getByTestId('select-year');
+    const periodSelect = screen.getByTestId('select-period');
     const categorySelect = screen.getByTestId('select-category');
     const paidSelect = screen.getByTestId('select-paid');
 
     expect(
-      monthSelect.compareDocumentPosition(yearSelect) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-
-    expect(
-      yearSelect.compareDocumentPosition(categorySelect) & Node.DOCUMENT_POSITION_FOLLOWING,
+      periodSelect.compareDocumentPosition(categorySelect) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
     expect(
@@ -210,14 +204,14 @@ describe('FilterControls — Ordem dos selects', () => {
     ).toBeTruthy();
   });
 
-  it('select-month deve vir antes de type-tabs', () => {
+  it('select-period deve vir antes de type-tabs', () => {
     renderComponent();
 
-    const monthSelect = screen.getByTestId('select-month');
+    const periodSelect = screen.getByTestId('select-period');
     const typeTabs = screen.getByTestId('type-tabs');
 
     expect(
-      monthSelect.compareDocumentPosition(typeTabs) & Node.DOCUMENT_POSITION_FOLLOWING,
+      periodSelect.compareDocumentPosition(typeTabs) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
 });
@@ -302,21 +296,21 @@ describe('FilterControls — Estado visual', () => {
     renderComponent({ typeFilter: 'all' });
 
     const allTab = screen.getByTestId('type-tab-all');
-    expect(allTab.className).toContain('bg-background');
+    expect(allTab.className).toContain('bg-primary');
   });
 
   it('tab "Entradas" deve ter classe de ativo quando typeFilter é "income"', () => {
     renderComponent({ typeFilter: 'income' });
 
     const incomeTab = screen.getByTestId('type-tab-income');
-    expect(incomeTab.className).toContain('bg-background');
+    expect(incomeTab.className).toContain('bg-primary');
   });
 
   it('tab "Todas" quinzenal deve ter classe de ativo quando quinzenalFilter é "month"', () => {
     renderComponent({ quinzenalFilter: 'month' });
 
     const allTab = screen.getByTestId('quinzenal-tab-month');
-    expect(allTab.className).toContain('bg-background');
+    expect(allTab.className).toContain('bg-primary');
   });
 
   it('search input deve exibir valor atual de searchFilter', () => {

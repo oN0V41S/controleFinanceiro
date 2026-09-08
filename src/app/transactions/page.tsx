@@ -270,6 +270,28 @@ export default function TransactionsPage() {
               </button>
             </div>
 
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <SummaryCard
+                label="Entradas"
+                value={summary.income}
+                type="income"
+                isLoading={isLoading}
+              />
+              <SummaryCard
+                label="Saídas"
+                value={summary.expense}
+                type="expense"
+                isLoading={isLoading}
+              />
+              <SummaryCard
+                label="Saldo"
+                value={summary.balance}
+                type="balance"
+                isLoading={isLoading}
+              />
+            </div>
+
             {/* Filters */}
             <div className="mb-4">
               <FilterControls
@@ -300,28 +322,6 @@ export default function TransactionsPage() {
               <Plus className="w-5 h-5" data-testid="icon-plus" />
               Nova Transação
             </button>
-
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <SummaryCard
-                label="Entradas"
-                value={summary.income}
-                type="income"
-                isLoading={isLoading}
-              />
-              <SummaryCard
-                label="Saídas"
-                value={summary.expense}
-                type="expense"
-                isLoading={isLoading}
-              />
-              <SummaryCard
-                label="Saldo"
-                value={summary.balance}
-                type="balance"
-                isLoading={isLoading}
-              />
-            </div>
 
             {/* Transactions Cards / Empty State */}
             <LazyLoad isReady={!isLoading} message="Carregando transações...">
