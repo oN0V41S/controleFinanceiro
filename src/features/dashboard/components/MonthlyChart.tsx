@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ChartWrapper, CHART_COLORS, ChartTooltipStyle } from './ChartWrapper';
+import { ChartWrapper, CHART_COLORS, ChartTooltipStyle, ChartLabelStyle, ChartItemStyle } from './ChartWrapper';
 import { PeriodSelector } from './PeriodSelector';
 
 interface MonthlyPoint {
@@ -71,6 +71,8 @@ export function MonthlyChart({ data, period, onPeriodChange }: MonthlyChartProps
             />
             <Tooltip
               contentStyle={ChartTooltipStyle}
+              labelStyle={ChartLabelStyle}
+              itemStyle={ChartItemStyle}
               formatter={(value: number) =>
                 new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
               }

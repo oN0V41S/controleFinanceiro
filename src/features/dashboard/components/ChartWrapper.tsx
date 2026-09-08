@@ -21,6 +21,9 @@ export const ChartTooltipStyle = {
   fontSize: '12px',
 } as const;
 
+export const ChartLabelStyle = { color: '#9ca3af' } as const;
+export const ChartItemStyle = { color: '#e2e8f0' } as const;
+
 export function ChartWrapper({ children, height = 280 }: ChartWrapperProps) {
   return (
     <div className="font-sans text-xs w-full min-w-0">

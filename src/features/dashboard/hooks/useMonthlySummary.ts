@@ -24,7 +24,7 @@ export function useMonthlySummary(): UseMonthlySummaryResult {
       const res = await fetch(`/api/transactions/monthly-summary?period=${encodeURIComponent(p)}`);
       if (!res.ok) throw new Error(`Erro ${res.status}`);
       const json = await res.json();
-      setData(json);
+      setData(Array.isArray(json) ? json : (json.data ?? []));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar evolução mensal');
     } finally {
