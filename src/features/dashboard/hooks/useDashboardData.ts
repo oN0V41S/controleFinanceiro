@@ -9,8 +9,13 @@ interface DashboardData {
   summary: FinancialSummary;
   isLoading: boolean;
   isSummaryLoading: boolean;
+  isFetching: boolean;
   error: string | null;
   refresh: () => void;
+}
+
+export function hashDashboardFilters(month?: string, year?: string, fortnight?: FortnightValue): string {
+  return `${month ?? ''}-${year ?? ''}-${fortnight ?? 'all'}`;
 }
 
 function buildDateRange(month?: string, year?: string, fortnight?: FortnightValue) {
@@ -100,5 +105,5 @@ export function useDashboardData(
       .slice(0, 5);
   }, [transactions]);
 
-  return { recentTransactions, summary, isLoading, isSummaryLoading, error, refresh };
+  return { recentTransactions, summary, isLoading, isSummaryLoading, isFetching: false, error, refresh };
 }
