@@ -371,19 +371,12 @@ export default function TransactionModal({
             markTouched();
             setCategory(value ?? '');
           }}>
-            <SelectTrigger
-              className="w-full h-9"
-              variant="finance"
-            >
+            <SelectTrigger className="w-full h-9">
               <SelectValue placeholder="Selecione uma categoria" />
             </SelectTrigger>
-            <SelectContent variant="finance">
+            <SelectContent className="bg-surface-container">
               {categoryOptions.map((cat) => (
-                <SelectItem
-                  key={cat}
-                  value={cat}
-                  variant="finance"
-                >
+                <SelectItem key={cat} value={cat}>
                   {cat}
                 </SelectItem>
               ))}
@@ -418,10 +411,7 @@ export default function TransactionModal({
             markTouched();
             setType(value as 'income' | 'expense');
           }}>
-            <SelectTrigger
-              className="w-full h-9"
-              variant="finance"
-            >
+            <SelectTrigger className="w-full h-9">
               <SelectValue placeholder="Selecione o tipo">
                 {(value: string) =>
                   value === 'income'
@@ -432,9 +422,9 @@ export default function TransactionModal({
                 }
               </SelectValue>
             </SelectTrigger>
-            <SelectContent variant="finance">
-              <SelectItem value="expense" variant="finance" data-testid="select-item-expense">Despesa</SelectItem>
-              <SelectItem value="income" variant="finance" data-testid="select-item-income">Receita</SelectItem>
+            <SelectContent className="bg-surface-container">
+              <SelectItem value="expense" data-testid="select-item-expense">Despesa</SelectItem>
+              <SelectItem value="income" data-testid="select-item-income">Receita</SelectItem>
             </SelectContent>
           </Select>
           {formTouched && fieldErrors.type && (

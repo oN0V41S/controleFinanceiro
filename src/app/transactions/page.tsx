@@ -41,6 +41,12 @@ export default function TransactionsPage() {
     setSelectedMonth,
     paidFilter,
     setPaidFilter,
+    typeFilter,
+    setTypeFilter,
+    searchFilter,
+    setSearchFilter,
+    categoryFilter,
+    setCategoryFilter,
     refresh,
     createTransaction,
     updateTransaction,
@@ -238,11 +244,20 @@ export default function TransactionsPage() {
               </div>
             )}
 
-            {/* Page Title — no desktop button here (moved below) */}
+            {/* Page Title */}
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-semibold text-on-surface font-sans">
-                Transações
-              </h1>
+              <div>
+                <h1 className="text-2xl font-semibold text-on-surface font-sans">
+                  Transações
+                </h1>
+                <p
+                  data-testid="page-subtitle"
+                  className="text-sm text-muted-foreground capitalize mt-0.5"
+                >
+                  {new Date(Number(selectedYear), Number(selectedMonth) - 1, 1)
+                    .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                </p>
+              </div>
               {/* Desktop button — visible on sm+ only */}
               <button
                 type="button"
@@ -254,31 +269,6 @@ export default function TransactionsPage() {
                 Nova Transação
               </button>
             </div>
-
-            {/* Filters */}
-            <div className="mb-4">
-              <FilterControls
-                quinzenalFilter={quinzenalFilter}
-                onQuinzenalFilterChange={setQuinzenalFilter}
-                selectedYear={selectedYear}
-                onYearChange={setSelectedYear}
-                selectedMonth={selectedMonth}
-                onMonthChange={setSelectedMonth}
-                paidFilter={paidFilter}
-                onPaidFilterChange={setPaidFilter}
-              />
-            </div>
-
-            {/* Mobile button — below filters, visible on mobile only */}
-            <button
-              type="button"
-              data-testid="btn-new-transaction-mobile"
-              onClick={openCreateModal}
-              className="sm:hidden w-full h-12 px-4 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-white font-medium transition-colors flex items-center justify-center gap-2 mb-6"
-            >
-              <Plus className="w-5 h-5" data-testid="icon-plus" />
-              Nova Transação
-            </button>
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -301,6 +291,37 @@ export default function TransactionsPage() {
                 isLoading={isLoading}
               />
             </div>
+
+            {/* Filters */}
+            <div className="mb-4">
+              <FilterControls
+                quinzenalFilter={quinzenalFilter}
+                onQuinzenalFilterChange={setQuinzenalFilter}
+                selectedYear={selectedYear}
+                onYearChange={setSelectedYear}
+                selectedMonth={selectedMonth}
+                onMonthChange={setSelectedMonth}
+                paidFilter={paidFilter}
+                onPaidFilterChange={setPaidFilter}
+                typeFilter={typeFilter}
+                onTypeFilterChange={setTypeFilter}
+                searchFilter={searchFilter}
+                onSearchChange={setSearchFilter}
+                categoryFilter={categoryFilter}
+                onCategoryFilterChange={setCategoryFilter}
+              />
+            </div>
+
+            {/* Mobile button — below filters, visible on mobile only */}
+            <button
+              type="button"
+              data-testid="btn-new-transaction-mobile"
+              onClick={openCreateModal}
+              className="sm:hidden w-full h-12 px-4 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-white font-medium transition-colors flex items-center justify-center gap-2 mb-6"
+            >
+              <Plus className="w-5 h-5" data-testid="icon-plus" />
+              Nova Transação
+            </button>
 
             {/* Transactions Cards / Empty State */}
             <LazyLoad isReady={!isLoading} message="Carregando transações...">

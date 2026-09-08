@@ -1,5 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useDashboardData } from '../useDashboardData';
+import type { FortnightValue } from '@/features/dashboard/components/FortnightFilter';
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch as unknown as typeof fetch;
@@ -189,7 +190,7 @@ describe('useDashboardData', () => {
       // Act - render with fortnight=all
       const { result, rerender } = renderHook(
         ({ fortnight }) => useDashboardData('1', '2025', fortnight),
-        { initialProps: { fortnight: 'all' as const } }
+        { initialProps: { fortnight: 'all' as FortnightValue } }
       );
       await waitFor(() => expect(result.current.isLoading).toBe(false));
       expect(mockFetch).toHaveBeenCalledTimes(1);
