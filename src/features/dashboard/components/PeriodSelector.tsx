@@ -22,7 +22,7 @@ function buildOptions(): PeriodOption[] {
   const currentYear = new Date().getFullYear();
   const opts: PeriodOption[] = [{ value: 'last6', label: 'Últimos 6 meses' }];
 
-  for (let year = 2024; year <= currentYear; year++) {
+  for (let year = currentYear; year >= 2024; year--) {
     const y = String(year);
     opts.push({ value: y, label: `${y} completo` });
     opts.push({ value: `${y}-s1`, label: `${y} — 1º semestre` });
