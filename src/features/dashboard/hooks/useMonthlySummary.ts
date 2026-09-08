@@ -1,9 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import type { MonthlyPoint } from '@/features/transactions/types';
 
 type Semester = 's1' | 's2';
+
+interface State {
+  data: MonthlyPoint[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+type Action =
+  | { type: 'fetch' }
+  | { type: 'success'; data: MonthlyPoint[] }
+  | { type: 'error'; message: string };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'fetch':
+      return { ...state, isLoading: true, error: null };
+    case 'success':
+      return { isLoading: false, data: action.data, error: null };
+    case 'error':
+      return { isLoading: false, data: state.data, error: action.message };
+  }
+}
 
 interface UseMonthlySummaryResult {
   data: MonthlyPoint[];
@@ -19,29 +41,28 @@ function getInitialSemester(): Semester {
 
 export function useMonthlySummary(year: string): UseMonthlySummaryResult {
   const [semester, setSemester] = useState<Semester>(getInitialSemester);
-  const [data, setData] = useState<MonthlyPoint[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, { data: [], isLoading: true, error: null });
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
-    setError(null);
+
+    dispatch({ type: 'fetch' });
 
     fetch(`/api/transactions/monthly-summary?period=${encodeURIComponent(`${year}-${semester}`)}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`Erro ${r.status}`))))
       .then((json) => {
-        if (!cancelled) setData(Array.isArray(json) ? json : (json.data ?? []));
+        if (!cancelled) {
+          dispatch({ type: 'success', data: Array.isArray(json) ? json : (json.data ?? []) });
+        }
       })
       .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Erro ao carregar evolução mensal');
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) {
+          dispatch({ type: 'error', message: err instanceof Error ? err.message : 'Erro ao carregar evolução mensal' });
+        }
       });
 
     return () => { cancelled = true; };
   }, [year, semester]);
 
-  return { data, isLoading, error, semester, setSemester };
+  return { data: state.data, isLoading: state.isLoading, error: state.error, semester, setSemester };
 }

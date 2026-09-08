@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Transaction, TransactionFormData, initialFormData } from '@/features/transactions/types';
 // import { FinancialSummary } from '@/features/transactions/validations'; // Not actually used in hook
 type ChartDataItem = { name: string; value: number };
@@ -15,31 +15,23 @@ const MOCK_TRANSACTIONS: Transaction[] = [
 
 const useFinanceData = () => {
     // --- STATE MANAGEMENT --- 
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
     const [categories, setCategories] = useState(['Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Casa', 'Outros']);
     const [newCategory, setNewCategory] = useState('');
     const [showAddCategory, setShowAddCategory] = useState(false);
-    
+
     const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions'>('dashboard');
-    
-    // Filtros 
+
+    // Filtros
     const [filterPeriod, setFilterPeriod] = useState('month');
-    const [selectedMonth, setSelectedMonth] = useState('');
-    const [selectedYear, setSelectedYear] = useState('');
+    const [selectedMonth, setSelectedMonth] = useState(() => String(new Date().getMonth() + 1).padStart(2, '0'));
+    const [selectedYear, setSelectedYear] = useState(() => String(new Date().getFullYear()));
     const [selectedFortnight, setSelectedFortnight] = useState('');
-    
+
     // Modais
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
     const [formData, setFormData] = useState<TransactionFormData>(initialFormData);
-
-    // Efeito para carregar dados iniciais e definir filtros padrão
-    useEffect(() => {
-        setTransactions(MOCK_TRANSACTIONS);
-        const now = new Date();
-        setSelectedMonth(String(now.getMonth() + 1).padStart(2, '0'));
-        setSelectedYear(String(now.getFullYear()));
-    }, []);
 
     // --- HANDLERS DE MODAL E FORMULÁRIO (useCallback) --- 
     
