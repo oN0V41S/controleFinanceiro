@@ -75,7 +75,7 @@ export function CategoryBreakdown({ transactions }: CategoryBreakdownProps) {
           </div>
         ) : (
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-[220px]">
               <ChartWrapper height={220}>
                 <PieChart>
                   <Pie

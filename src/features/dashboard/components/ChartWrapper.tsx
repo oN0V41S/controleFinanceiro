@@ -23,8 +23,8 @@ export const ChartTooltipStyle = {
 
 export function ChartWrapper({ children, height = 280 }: ChartWrapperProps) {
   return (
-    <div className="font-sans text-xs">
-      <ResponsiveContainer width="100%" height={height}>
+    <div className="font-sans text-xs w-full min-w-0">
+      <ResponsiveContainer width="100%" height={height} debounce={1}>
         {children as React.ReactElement}
       </ResponsiveContainer>
     </div>
