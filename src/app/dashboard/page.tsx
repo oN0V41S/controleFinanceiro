@@ -37,7 +37,7 @@ export default function DashboardPage() {
     'all',
   );
 
-  const { data: monthlyData, isLoading: chartLoading, period, setPeriod } = useMonthlySummary();
+  const { data: monthlyData, isLoading: chartLoading, semester, setSemester } = useMonthlySummary(selectedYear);
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';
@@ -178,8 +178,8 @@ export default function DashboardPage() {
               <LazyLoad isReady={!chartLoading} message="Carregando evolução mensal...">
                 <MonthlyChart
                   data={monthlyData}
-                  period={period}
-                  onPeriodChange={setPeriod}
+                  semester={semester}
+                  onSemesterChange={setSemester}
                 />
               </LazyLoad>
               <LazyLoad isReady={!isLoading} message="Carregando categorias...">

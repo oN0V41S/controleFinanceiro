@@ -19,18 +19,6 @@ jest.mock('recharts', () => ({
   Legend: () => <div data-testid="legend" />,
 }));
 
-jest.mock('@/components/ui/select', () => ({
-  Select: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="period-select">{children}</div>
-  ),
-  SelectTrigger: ({ children }: { children: React.ReactNode }) => <button>{children}</button>,
-  SelectValue: ({ placeholder }: { placeholder?: string }) => <span>{placeholder}</span>,
-  SelectContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) => (
-    <div data-value={value}>{children}</div>
-  ),
-}));
-
 const mockData = [
   { month: '04', monthLabel: 'Abr', income: 4800, expense: 3200 },
   { month: '05', monthLabel: 'Mai', income: 5200, expense: 3800 },
@@ -41,8 +29,8 @@ describe('MonthlyChart', () => {
     render(
       <MonthlyChart
         data={[]}
-        period="last6"
-        onPeriodChange={() => {}}
+        semester="s1"
+        onSemesterChange={() => {}}
       />
     );
     expect(screen.getByText('Evolução Mensal')).toBeInTheDocument();
@@ -52,8 +40,8 @@ describe('MonthlyChart', () => {
     render(
       <MonthlyChart
         data={mockData}
-        period="last6"
-        onPeriodChange={() => {}}
+        semester="s1"
+        onSemesterChange={() => {}}
       />
     );
     expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
@@ -65,22 +53,23 @@ describe('MonthlyChart', () => {
     render(
       <MonthlyChart
         data={[]}
-        period="last6"
-        onPeriodChange={() => {}}
+        semester="s1"
+        onSemesterChange={() => {}}
       />
     );
     expect(screen.getByText('Nenhum dado para o período selecionado.')).toBeInTheDocument();
     expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument();
   });
 
-  it('renders PeriodSelector', () => {
+  it('renders semester toggle buttons', () => {
     render(
       <MonthlyChart
         data={mockData}
-        period="last6"
-        onPeriodChange={() => {}}
+        semester="s1"
+        onSemesterChange={() => {}}
       />
     );
-    expect(screen.getByTestId('period-select')).toBeInTheDocument();
+    expect(screen.getByText('1º Sem.')).toBeInTheDocument();
+    expect(screen.getByText('2º Sem.')).toBeInTheDocument();
   });
 });
