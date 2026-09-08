@@ -144,7 +144,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
                 {() => `${MONTHS.find((m) => m.value === selectedMonth)?.label ?? ''} ${selectedYear}`}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-surface-container max-h-60 overflow-y-auto">
+            <SelectContent className="bg-surface-container max-h-60 overflow-y-auto" alignItemWithTrigger={false}>
               {yearOptions.flatMap((year) =>
                 MONTHS.map((m) => (
                   <SelectItem key={`${year}-${m.value}`} value={`${year}-${m.value}`}>
